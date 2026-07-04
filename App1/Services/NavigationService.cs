@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
 using System;
+using System.Diagnostics;
 
 namespace SettingsClone.Services;
 
@@ -27,15 +28,29 @@ public class NavigationService : INavigationService
             throw new InvalidOperationException("Frame non inizializzato");
 
         // 1. crea la Page via DI
-        var page = _provider.GetRequiredService<TPage>();
+        //var page = _provider.GetRequiredService<TPage>();
 
         // 2. set frame content
-        _frame.Content = page;
+        //_frame.Content = page;
+        _frame.Navigate(typeof(TPage), parameter);
 
         // 3. dispatch parameter manuale
-        if (page is INavigationAware aware)
-        {
-            aware.OnNavigatedTo(parameter);
-        }
+        //if (page is INavigationAware aware)
+        //{
+        //    aware.OnNavigatedTo(parameter);
+        //}
+
+        Debug.WriteLine(_frame.CanGoBack);
     }
+
+    public void GoBack()
+    {
+        if (_frame is null)
+            throw new InvalidOperationException("Frame non inizializzato");
+
+        if (_frame.CanGoBack)
+            _frame.GoBack();
+    }
+
+    public bool CanGoBack => (_frame is not null)? _frame.CanGoBack : throw new InvalidOperationException("Frame non inizializzato");
 }

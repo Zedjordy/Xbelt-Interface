@@ -10,17 +10,16 @@ using Windows.ApplicationModel.DataTransfer;
 
 namespace SettingsClone.Views;
 
-public sealed partial class MessageBuilderPage : Page, INavigationAware
+public sealed partial class MessageBuilderPage : Page
 {
     public MessageBuilderViewModel ViewModel { get; }
 
-    //public MessageBuilderPage(MessageBuilderViewModel vm)
-    public MessageBuilderPage(MessageBuilderViewModel vm)
+    public MessageBuilderPage()
     {
         InitializeComponent();
 
-        ViewModel = vm;
-        DataContext = vm;
+        ViewModel = App.Services.GetRequiredService<MessageBuilderViewModel>();
+        DataContext = ViewModel;
 
         InEditor.InsertTokenRequested += (s, token) =>
         {
@@ -30,6 +29,16 @@ public sealed partial class MessageBuilderPage : Page, INavigationAware
         OutEditor.InsertTokenRequested += (s, token) =>
         {
             ViewModel.InsertOutToken(token);
+        };
+
+        InEditor.RemoveTokenRequested += (s, token) =>
+        {
+            ViewModel.RemoveToken(s, token);
+        };
+
+        OutEditor.RemoveTokenRequested += (s, token) =>
+        {
+            ViewModel.RemoveToken(s, token);
         };
 
     }
@@ -51,10 +60,12 @@ public sealed partial class MessageBuilderPage : Page, INavigationAware
         e.AcceptedOperation = DataPackageOperation.Move;
     }
 
-    // 👇 QUESTO È IL PUNTO GIUSTO
-    public void OnNavigatedTo(object? parameter)
+
+    protected override void OnNavigatedTo(NavigationEventArgs e)
     {
-        ViewModel.Initialize(parameter);
+        base.OnNavigatedTo(e);
+
+        ViewModel.Initialize(e.Parameter);
     }
 
 }

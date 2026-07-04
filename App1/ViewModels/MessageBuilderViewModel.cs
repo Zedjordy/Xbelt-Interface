@@ -37,15 +37,9 @@ public class MessageBuilderViewModel : INotifyPropertyChanged
     public MessageBuilderViewModel(INavigationService nav)
     {
         _nav = nav;
-        ////InMessageTokens = new ObservableCollection<MessageToken>(model.InMessageTokens);
-        ////OutMessageTokens = new ObservableCollection<MessageToken>(model.OutMessageTokens);
-        //InMessageTokens = new ObservableCollection<MessageToken>();
-        //OutMessageTokens = new ObservableCollection<MessageToken>();
 
         Initialize(nav);
         Seed();
-        //InMessageTokens.CollectionChanged += (_, __) => OnPropertyChanged(nameof(InPreview));
-        //OutMessageTokens.CollectionChanged += (_, __) => OnPropertyChanged(nameof(OutPreview));
     }
     #endregion
 
@@ -79,26 +73,24 @@ public class MessageBuilderViewModel : INotifyPropertyChanged
     #region METHODS
     private void Seed()
     {
-        AvailableTokens.Add(new() { Type = TokenType.STX, Name = "STX" });
+        AvailableTokens.Add(new() { Type = TokenType.STX, Name = "STX", Value="\x02", Length = 1});
         AvailableTokens.Add(new() { Type = TokenType.Separator, Name = "Separator" });
         AvailableTokens.Add(new() { Type = TokenType.Index, Name = "Index" });
         AvailableTokens.Add(new() { Type = TokenType.Barcode, Name = "Barcode" });
         AvailableTokens.Add(new() { Type = TokenType.Date, Name = "Date" });
         AvailableTokens.Add(new() { Type = TokenType.Time, Name = "TimeStamp" });
         AvailableTokens.Add(new() { Type = TokenType.Constant, Name = "Constant" });
-        AvailableTokens.Add(new() { Type = TokenType.ETX, Name = "ETX" });
+        AvailableTokens.Add(new() { Type = TokenType.ETX, Name = "ETX", Value = "\x03", Length = 1});
     }
 
     public void InsertInToken(MessageToken token)
     {
         Scanner.InMessageTokens.Add(token);
-        OnPropertyChanged(nameof(InPreview));
     }
 
     public void InsertOutToken(MessageToken token)
     {
         Scanner.OutMessageTokens.Add(token);
-        OnPropertyChanged(nameof(OutPreview));
     }
 
     public void InsertToken(MessageToken token, int index = -1)
@@ -133,10 +125,19 @@ public class MessageBuilderViewModel : INotifyPropertyChanged
         OnPropertyChanged(nameof(InPreview));
     }
 
-    public void RemoveToken(MessageToken token)
+    public void RemoveToken(object obj, MessageToken token)
     {
-        Scanner.InMessageTokens.Remove(token);
-        OnPropertyChanged(nameof(InPreview));
+        if(obj is SettingsClone.Views.MessageEditorView editor)
+        {
+            if(editor.Name == "InEditor")
+            {
+                Scanner.InMessageTokens.Remove(token);
+            }
+            else
+            {
+                Scanner.OutMessageTokens.Remove(token);
+            }
+        }
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -151,6 +152,9 @@ public class MessageBuilderViewModel : INotifyPropertyChanged
         {
             _scanner = scanner;
 
+            //Aggiorna Preview dopo riordinamento
+            scanner.InMessageTokens.CollectionChanged += (_, __) => OnPropertyChanged(nameof(InPreview));
+            scanner.OutMessageTokens.CollectionChanged += (_, __) => OnPropertyChanged(nameof(OutPreview));
         }
 
         OnPropertyChanged(nameof(InPreview));

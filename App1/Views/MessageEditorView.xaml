@@ -68,10 +68,12 @@
 
                 <!-- MESSAGE -->
                 <ListView
+                    x:Name="MessageList"
                     Grid.Column="1"
                     ItemsSource="{x:Bind MessageTokens}"
                     SelectedItem="{x:Bind SelectedToken, Mode=TwoWay}"
                     CanReorderItems="True"
+                    CanDragItems="True"
                     AllowDrop="True"
                     ReorderMode="Enabled"
                     Background="Transparent"
@@ -95,12 +97,22 @@
                 <!-- PROPERTIES -->
                 <StackPanel Grid.Column="2" Spacing="10">
 
-                    <TextBlock Text="{Binding SelectedToken.Name, Mode=OneWay}"/>
+                    <TextBlock Text="{x:Bind SelectedToken.Name, Mode=OneWay}"/>
 
-                    <TextBox Text="{Binding SelectedToken.Value, Mode=TwoWay}"
+                    <TextBlock Text="Length"
+                           FontWeight="SemiBold"/>                    
+                    <TextBox Text="{x:Bind SelectedToken.Length, Mode=TwoWay}"
+                             PlaceholderText="Value (if applicable)"/>
+                    
+                    <TextBlock Text="Value"
+                           FontWeight="SemiBold"/>
+                    <TextBox Text="{x:Bind SelectedToken.Value, Mode=TwoWay}"
                              PlaceholderText="Value (if applicable)"/>
 
-                    <Button Content="Delete"
+                    <Button Content="Delete Selected Token"
+                            Foreground="Black"
+                            Background="Goldenrod"
+                            FontWeight="SemiBold"
                             Click="Delete_Click"/>
                 </StackPanel>
 

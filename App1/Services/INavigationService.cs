@@ -9,9 +9,7 @@ public interface INavigationService
 
     void Navigate<TPage>(object? parameter = null)
         where TPage : Page;
-}
 
-public interface INavigationAware
-{
-    void OnNavigatedTo(object? parameter);
+    void GoBack();
+    bool CanGoBack { get; }
 }

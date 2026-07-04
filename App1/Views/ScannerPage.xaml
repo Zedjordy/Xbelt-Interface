@@ -21,17 +21,17 @@
                 Margin="0,0,0,20"/>
 
 
-            
+
             <!-- MASTER CARD -->
             <Border
                 CornerRadius="10"
                 Padding="24"
                 MinWidth="300"
-                MaxWidth="1000"
+                MaxWidth="1100"
                 Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
-                
-                <StackPanel Spacing="20">                    
-                
+
+                <StackPanel Spacing="20">
+
                     <Button Content="+ Add Scanner"                    
                             FontWeight="Normal"
                             FontSize="16"
@@ -40,441 +40,247 @@
                             Command="{Binding ViewModel.AddScannerCommand, ElementName=RootPage}"
                             CommandParameter="{Binding}"/>
 
-                <ItemsControl ItemsSource="{Binding Scanners}">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
+                    <ItemsControl ItemsSource="{Binding Scanners}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
 
-                            <controls:Expander
-                                IsExpanded="False"
-                                HorizontalAlignment="Left">
+                                <controls:Expander
+                                    IsExpanded="False"
+                                    Margin="0,0,0,10">
 
-                                <!-- HEADER STYLE WINDOWS SETTINGS -->
-                                <controls:Expander.Header>
+                                    <!-- HEADER STYLE WINDOWS SETTINGS -->
+                                    <controls:Expander.Header >
+                                        
+                                        <Grid Height="Auto"
+                                              Width="950"
+                                              Padding="10">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
 
-                                    <Grid Height="70">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition MinWidth="850" MaxWidth="850" />
-                                        </Grid.ColumnDefinitions>
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="Auto" />
-                                            </Grid.ColumnDefinitions>
-                                            
-                                            <TextBlock
-                                                VerticalAlignment="Center"
-                                                HorizontalAlignment="Stretch"
-                                                Text="Scanner "
-                                                FontSize="20"
-                                                FontWeight="SemiBold"/>
-                                            
-                                            <!--<ToggleSwitch
-                                                Grid.Column="1"
-                                                IsOn="{Binding IsEnabled, Mode=TwoWay}"
-                                                HorizontalAlignment="Left"/>-->                                                    
+                                                <TextBlock                                                
+                                                    Grid.Column="0"
+                                                    VerticalAlignment="Center"
+                                                    HorizontalAlignment="Left"
+                                                    Text="Scanner "
+                                                    FontSize="20"
+                                                    FontWeight="SemiBold"/>
+
+                                                <ToggleSwitch                                                    
+                                                    Grid.Column="1"
+                                                    VerticalAlignment="Center"
+                                                    HorizontalAlignment="Right"
+                                                    OnContent="Enabled"
+                                                    OffContent="Disabled"
+                                                    IsOn="{Binding IsEnabled, Mode=TwoWay}"/>
+
                                         </Grid>
 
-                                    </Grid>
+                                    </controls:Expander.Header>
+                                    <StackPanel Spacing="10">
+                                        <!-- ENABLE -->
+                                        <!--<Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" MinWidth="450"/>
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
 
-                                </controls:Expander.Header>
-                                <StackPanel Spacing="10">
-                                    <!-- ENABLE -->
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*" MinWidth="450"/>
-                                            <ColumnDefinition Width="Auto" />
-                                        </Grid.ColumnDefinitions>
-
-                                        <StackPanel>
-                                            <TextBlock Text="Enable scanner"
+                                            <StackPanel>
+                                                <TextBlock Text="Enable scanner"
                                                        FontWeight="SemiBold"
                                                        TextWrapping="WrapWholeWords"/>
-                                            
-                                            <TextBlock Text="Turn scanner service on or off."
+
+                                                <TextBlock Text="Turn scanner service on or off."
                                                        Opacity="0.7"
                                                        TextWrapping="WrapWholeWords"/>
-                                        </StackPanel>
-                                        
-                                        <ToggleSwitch
+                                            </StackPanel>
+
+                                            <ToggleSwitch
                                             IsOn="{Binding IsEnabled, Mode=TwoWay}"
                                             HorizontalAlignment="Right"
                                             Margin="0,0,-70,0"/>
-                                    </Grid>
+                                        </Grid>
 
-                                    <Rectangle Height="1"
-                                               Fill="{ThemeResource DividerStrokeColorDefaultBrush}"/>
+                                        <Rectangle Height="1"
+                                               Fill="{ThemeResource DividerStrokeColorDefaultBrush}"/>-->
 
-                                    <!-- PROTOCOL -->
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*" MinWidth="450"/>
-                                            <ColumnDefinition Width="Auto" />
-                                        </Grid.ColumnDefinitions>
+                                        <!-- PROTOCOL -->
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" MinWidth="450"/>
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
 
-                                        <StackPanel  
+                                            <StackPanel  
                                             HorizontalAlignment="Left" 
                                             VerticalAlignment="Center"
                                             Width="Auto"
                                             Grid.Column="0">
 
-                                            <TextBlock Text="Connection protocol"
+                                                <TextBlock Text="Connection protocol"
                                                        FontWeight="SemiBold" 
                                                        TextLineBounds="Full" 
                                                        TextWrapping="WrapWholeWords"/>
 
-                                            <TextBlock Text="Select TCP or UDP communication protocol."
+                                                <TextBlock Text="Select TCP or UDP communication protocol."
                                                        Opacity="0.7"
                                                        TextWrapping="WrapWholeWords"/>
-                                        </StackPanel>
+                                            </StackPanel>
 
-                                        <StackPanel Spacing="1"
+                                            <StackPanel Spacing="1"
                                                     Orientation="Horizontal"
                                                     Grid.Column="1">
 
-                                            <RadioButton Content="UDP"
+                                                <RadioButton Content="UDP"
                                                          BorderThickness="10"
                                                          IsChecked="{Binding IsUdp, Mode=TwoWay}"/>
 
-                                            <RadioButton Content="TCP/IP"
+                                                <RadioButton Content="TCP/IP"
                                                          IsChecked="{Binding IsTcp, Mode=TwoWay}"/>
-                                        </StackPanel>
-                                    </Grid>
-                                    
+                                            </StackPanel>
+                                        </Grid>
 
-                                    <Border
+
+                                        <Border
                                         HorizontalAlignment="Left"
                                         Padding="0"
                                         CornerRadius="2"
                                         Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
-                                        
-                                        <StackPanel>
-                                            <controls:Expander
+
+                                            <StackPanel>
+                                                <controls:Expander
                                                 IsExpanded="False"
                                                 HorizontalAlignment="Left">
-                                                
-                                                <!-- HEADER STYLE WINDOWS SETTINGS -->
-                                                <controls:Expander.Header>
-                                                    
-                                                    <Grid Padding="20">
-                                                        <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition MinWidth="850" MaxWidth="850" />
-                                                        </Grid.ColumnDefinitions>
-                                                        
-                                                        <StackPanel>
-                                                            <TextBlock
+
+                                                    <!-- HEADER STYLE WINDOWS SETTINGS -->
+                                                    <controls:Expander.Header>
+
+                                                        <Grid Padding="20">
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition MinWidth="850" MaxWidth="850" />
+                                                            </Grid.ColumnDefinitions>
+
+                                                            <StackPanel>
+                                                                <TextBlock
                                                                 Text="Ethernet configuration"
                                                                 FontSize="16"
                                                                 FontWeight="SemiBold"/>
-                                                            
-                                                            <Grid ColumnSpacing="20">
-                                                                <Grid.ColumnDefinitions>
-                                                                    <ColumnDefinition Width="100"/>
-                                                                    <ColumnDefinition Width="100"/>
-                                                                </Grid.ColumnDefinitions>
-                                                                
-                                                                <StackPanel
+
+                                                                <Grid ColumnSpacing="20">
+                                                                    <Grid.ColumnDefinitions>
+                                                                        <ColumnDefinition Width="100"/>
+                                                                        <ColumnDefinition Width="100"/>
+                                                                    </Grid.ColumnDefinitions>
+
+                                                                    <StackPanel
                                                     Grid.Column="0">
-                                                                    <TextBlock
+                                                                        <TextBlock
                                                         Text="IP:"
                                                         FontSize="12"
                                                         Opacity="0.7"/>
 
-                                                                    <TextBlock
+                                                                        <TextBlock
                                                         Text="Subnet:"
                                                         FontSize="12"
                                                         Opacity="0.7"/>
 
-                                                                    <TextBlock
+                                                                        <TextBlock
                                                         Text="Gateway:"
                                                         FontSize="12"
                                                         Opacity="0.7"/>
 
-                                                                    <TextBlock
+                                                                        <TextBlock
                                                         Text="Server Port:"
                                                         FontSize="12"
                                                         Opacity="0.7"/>
 
-                                                                    <TextBlock
+                                                                        <TextBlock
                                                         Text="Client Port:"
                                                         FontSize="12"
                                                         Opacity="0.7"/>
-                                                                </StackPanel>
-                                                                
-                                                                <StackPanel Grid.Column="1">
-                                                                    <TextBlock
+                                                                    </StackPanel>
+
+                                                                    <StackPanel Grid.Column="1">
+                                                                        <TextBlock
                                                                         Text="{Binding IpAddress}"
                                                                         FontSize="12"
                                                                         Opacity="0.7"/>
-                                                                    
-                                                                    <TextBlock
+
+                                                                        <TextBlock
                                                                         Text="{Binding SubnetMask}"
                                                                         FontSize="12"
                                                                         Opacity="0.7"/>
-                                                                    
-                                                                    <TextBlock
+
+                                                                        <TextBlock
                                                                         Text="{Binding Gateway}"
                                                                         FontSize="12"
                                                                         Opacity="0.7"/>
-                                                                    
-                                                                    <TextBlock
+
+                                                                        <TextBlock
                                                                         Text="{Binding ServerPort}"
                                                                         FontSize="12"
                                                                         Opacity="0.7"/>
-                                                                    
-                                                                    <TextBlock
+
+                                                                        <TextBlock
                                                                         Text="{Binding ClientPort}"
                                                                         FontSize="12"
                                                                         Opacity="0.7"/>
-                                                                </StackPanel>
-                                                            </Grid>
-                                                            
-                                                        </StackPanel>
-                                                        
-                                                    </Grid>
-                                                    
-                                                </controls:Expander.Header>
-                                                
-                                                <!-- Ethernet Configuration -->
-                                                <Grid Padding="20">
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition MinWidth="850" MaxWidth="850" />
-                                                        <ColumnDefinition Width="Auto" />
-                                                    </Grid.ColumnDefinitions>
+                                                                    </StackPanel>
+                                                                </Grid>
 
-                                                    <StackPanel Spacing="20" 
-                                                Margin="0,20,0,20" 
-                                                MinWidth="350"
-                                                HorizontalAlignment="Left"
-                                                Grid.Column="0">
+                                                            </StackPanel>
 
-                                                        <TextBox Header="IP Address"
-                                                                 PlaceholderText="0.0.0.0"
-                                                                 Text="{Binding IpAddress, Mode=TwoWay}"/>
+                                                        </Grid>
 
-                                                        <TextBox Header="Subnet Mask"
-                                                                 PlaceholderText="0.0.0.0"
-                                                                 Text="{Binding SubnetMask, Mode=TwoWay}"/>
+                                                    </controls:Expander.Header>
 
-                                                        <TextBox Header="Gateway"
-                                                                 PlaceholderText="0.0.0.0"
-                                                                 Text="{Binding Gateway, Mode=TwoWay}"/>
-
-                                                        <NumberBox Header="Server Port"
-                                                                   Value="{Binding ServerPort, Mode=TwoWay}"
-                                                                   Minimum="0"
-                                                                   Maximum="65535"/>
-
-                                                        <NumberBox Header="Client Port"
-                                                                   Value="{Binding ClientPort, Mode=TwoWay}"
-                                                                   Minimum="0"
-                                                                   Maximum="65535"/>
-
-                                                    </StackPanel>
-                                                </Grid>
-
-                                            </controls:Expander>
-                                        </StackPanel>
-                                    </Border>
-
-
-
-                                    <Border
-                        HorizontalAlignment="Left"
-                        Padding="0"
-                        CornerRadius="2"
-                        Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
-
-                                        <StackPanel
-                            Spacing="5">
-
-                                            <controls:Expander
-                                IsExpanded="False"
-                                HorizontalAlignment="Left">
-
-                                                <!-- HEADER SETTINGS -->
-                                                <controls:Expander.Header>
+                                                    <!-- Ethernet Configuration -->
                                                     <Grid Padding="20">
                                                         <Grid.ColumnDefinitions>
                                                             <ColumnDefinition MinWidth="850" MaxWidth="850" />
                                                             <ColumnDefinition Width="Auto" />
                                                         </Grid.ColumnDefinitions>
 
-                                                        <StackPanel>
-                                                            <TextBlock
-                                                Text="RX / TX Message configuration"
-                                                FontSize="16"
-                                                FontWeight="SemiBold"/>
-
-                                                            <TextBlock
-                                                Text="Index, Barcode, Response message"
-                                                FontSize="12"
-                                                Opacity="0.7"/>
-                                                        </StackPanel>
-
-                                                    </Grid>
-
-
-                                                </controls:Expander.Header>
-
-                                                <!-- Socket configuration -->
-                                                <Grid >
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="*"
-                                                          MinWidth="500"/>
-                                                        <ColumnDefinition Width="*" 
-                                                          MinWidth="500"/>
-                                                    </Grid.ColumnDefinitions>
-
-                                                    <StackPanel Spacing="10" 
-                                                Margin="0,0,0,20" 
+                                                        <StackPanel Spacing="20" 
+                                                Margin="0,20,0,20" 
+                                                MinWidth="350"
                                                 HorizontalAlignment="Left"
                                                 Grid.Column="0">
-                                                        <TextBlock
-                                                Text="RX Message"
-                                                FontSize="22"
-                                                FontWeight="SemiBold"/>
 
-                                                        <ComboBox SelectedItem="{Binding Protocol, Mode=TwoWay}" 
-                                                  Header="Field 1"
-                                                  MinWidth="200" 
-                                                  HorizontalAlignment="Left"
-                                                  VerticalAlignment="Center">
+                                                            <TextBox Header="IP Address"
+                                                                 PlaceholderText="0.0.0.0"
+                                                                 Text="{Binding IpAddress, Mode=TwoWay}"/>
 
-                                                            <ComboBoxItem Content="Index"/>
-                                                            <ComboBoxItem Content="Separator"/>
-                                                        </ComboBox>
+                                                            <TextBox Header="Subnet Mask"
+                                                                 PlaceholderText="0.0.0.0"
+                                                                 Text="{Binding SubnetMask, Mode=TwoWay}"/>
 
-                                                        <ComboBox SelectedItem="{Binding Protocol, Mode=TwoWay}" 
-                                                  Header="Field 2"
-                                                  MinWidth="200" 
-                                                  HorizontalAlignment="Left"
-                                                  VerticalAlignment="Center">
+                                                            <TextBox Header="Gateway"
+                                                                 PlaceholderText="0.0.0.0"
+                                                                 Text="{Binding Gateway, Mode=TwoWay}"/>
 
-                                                            <ComboBoxItem Content="Index"/>
-                                                            <ComboBoxItem Content="Separator"/>
-                                                        </ComboBox>
+                                                            <NumberBox Header="Server Port"
+                                                                   Value="{Binding ServerPort, Mode=TwoWay}"
+                                                                   Minimum="0"
+                                                                   Maximum="65535"/>
 
-                                                        <ComboBox SelectedItem="{Binding Protocol, Mode=TwoWay}" 
-                                                  Header="Field 3"
-                                                  MinWidth="200" 
-                                                  HorizontalAlignment="Left"
-                                                  VerticalAlignment="Center">
+                                                            <NumberBox Header="Client Port"
+                                                                   Value="{Binding ClientPort, Mode=TwoWay}"
+                                                                   Minimum="0"
+                                                                   Maximum="65535"/>
 
-                                                            <ComboBoxItem Content="Index"/>
-                                                            <ComboBoxItem Content="Separator"/>
-                                                        </ComboBox>
+                                                        </StackPanel>
+                                                    </Grid>
 
-                                                        <ComboBox SelectedItem="{Binding Protocol, Mode=TwoWay}" 
-                                                  Header="Field 4"
-                                                  MinWidth="200" 
-                                                  HorizontalAlignment="Left"
-                                                  VerticalAlignment="Center">
+                                                </controls:Expander>
+                                            </StackPanel>
+                                        </Border>
 
-                                                            <ComboBoxItem Content="Index"/>
-                                                            <ComboBoxItem Content="Separator"/>
-                                                        </ComboBox>
+                                        <Rectangle Height="1"
+                                               Fill="{ThemeResource DividerStrokeColorDefaultBrush}"/>
 
-                                                    </StackPanel>
-
-                                                    <StackPanel Spacing="10" 
-                                                Margin="0,0,0,20" 
-                                                HorizontalAlignment="Left"
-                                                Grid.Column="1">
-                                                        <TextBlock
-                                                Text="TX Message"
-                                                FontSize="22"
-                                                FontWeight="SemiBold"/>
-
-                                                        <ComboBox SelectedItem="{Binding Protocol, Mode=TwoWay}" 
-                                                  Header="Field 1"
-                                                  MinWidth="200" 
-                                                  HorizontalAlignment="Left"
-                                                  VerticalAlignment="Center">
-
-                                                            <ComboBoxItem Content="Index"/>
-                                                            <ComboBoxItem Content="Separator"/>
-                                                        </ComboBox>
-
-                                                        <ComboBox SelectedItem="{Binding Protocol, Mode=TwoWay}" 
-                                                  Header="Field 2"
-                                                  MinWidth="200" 
-                                                  HorizontalAlignment="Left"
-                                                  VerticalAlignment="Center">
-
-                                                            <ComboBoxItem Content="Index"/>
-                                                            <ComboBoxItem Content="Separator"/>
-                                                        </ComboBox>
-
-                                                        <ComboBox SelectedItem="{Binding Protocol, Mode=TwoWay}" 
-                                                  Header="Field 3"
-                                                  MinWidth="200" 
-                                                  HorizontalAlignment="Left"
-                                                  VerticalAlignment="Center">
-
-                                                            <ComboBoxItem Content="Index"/>
-                                                            <ComboBoxItem Content="Separator"/>
-                                                        </ComboBox>
-
-                                                        <ComboBox SelectedItem="{Binding Protocol, Mode=TwoWay}" 
-                                                  Header="Field 4"
-                                                  MinWidth="200" 
-                                                  HorizontalAlignment="Left"
-                                                  VerticalAlignment="Center">
-
-                                                            <ComboBoxItem Content="Index"/>
-                                                            <ComboBoxItem Content="Separator"/>
-                                                        </ComboBox>
-
-                                                    </StackPanel>
-
-                                                </Grid>
-
-                                            </controls:Expander>
-
-                                            <Button Height="64"
-                                    Padding="16,10"
-                                    HorizontalAlignment="Stretch"
-                                    HorizontalContentAlignment="Stretch"
-                                    Width="Auto">
-
-                                                <Grid ColumnSpacing="16">
-
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="Auto"/>
-                                                        <ColumnDefinition Width="*"/>
-                                                        <ColumnDefinition Width="Auto"/>
-                                                    </Grid.ColumnDefinitions>
-
-                                                    <!-- ICONA SINISTRA -->
-                                                    <SymbolIcon Symbol="Message"                                                
-                                                Width="24"
-                                                VerticalAlignment="Center"
-                                                HorizontalAlignment="Left"/>
-
-                                                    <!-- TESTO -->
-                                                    <StackPanel Grid.Column="1"
-                                                                HorizontalAlignment="Stretch"
-                                                                VerticalAlignment="Center"
-                                                                Spacing="2">
-
-                                                        <TextBlock Text="RX / TX Message configuration"                                           
-                                                   FontSize="16"
-                                                   FontWeight="SemiBold"
-                                                   TextTrimming="CharacterEllipsis"/>
-
-                                                        <TextBlock Text="Index, Barcode, Response message"
-                                                   FontSize="12"
-                                                   Opacity="0.7"
-                                                   TextTrimming="CharacterEllipsis"/>
-                                                    </StackPanel>
-
-                                                    <!-- CHEVRON -->
-                                                    <SymbolIcon Grid.Column="2"
-                                                Symbol="Forward"
-                                                Width="20"
-                                                VerticalAlignment="Center"/>
-                                                </Grid>
-                                            </Button>
+                                        <Grid>
 
                                             <local:PageButton
                                                 Title="RX / TX Message "
@@ -484,47 +290,44 @@
                                                 Command="{Binding ViewModel.OpenSocketCommand, ElementName=RootPage}"
                                                 CommandParameter="{Binding}"/>
 
-                                        </StackPanel>
+                                        </Grid>
 
 
 
-                                    </Border>
-
-
-                                    <Rectangle Height="1"
+                                        <Rectangle Height="1"
                                                Fill="{ThemeResource DividerStrokeColorDefaultBrush}"/>
 
-                                    <!-- Save -->
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="Auto" />
-                                        </Grid.ColumnDefinitions>
-                                        
-                                        <!-- LEFT -->
-                                        <Button Content="Delete Scanner"
-                                                FontWeight="Bold"
+                                        <!-- Save -->
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <!-- LEFT -->
+                                            <Button Content="Delete Scanner"
+                                                FontWeight="SemiBold"
                                                 Foreground="Black"
-                                                Background="DarkOrange"
+                                                Background="Goldenrod"
                                                 HorizontalAlignment="Left"
                                                 Command="{Binding ViewModel.RemoveScannerCommand, ElementName=RootPage}"
                                                 CommandParameter="{Binding}"/>
-                                        
-                                        <!-- RIGHT -->
-                                        <StackPanel Grid.Column="1"
+
+                                            <!-- RIGHT -->
+                                            <StackPanel Grid.Column="1"
                                                     Orientation="Horizontal"
                                                     Spacing="10">
-                                            
-                                            <Button Content="Cancel"/>
-                                            <Button Content="Save"
+
+                                                <Button Content="Cancel"/>
+                                                <Button Content="Save"
                                                     Style="{ThemeResource AccentButtonStyle}"/>
-                                        </StackPanel>
-                                    </Grid>
-                                </StackPanel>
-                            </controls:Expander>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
+                                            </StackPanel>
+                                        </Grid>
+                                    </StackPanel>
+                                </controls:Expander>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
                 </StackPanel>
             </Border>
 

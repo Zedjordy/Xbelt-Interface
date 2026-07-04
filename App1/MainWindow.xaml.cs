@@ -41,4 +41,10 @@ public sealed partial class MainWindow : Window
             }
         }
     }
+
+    private void Back_Click(object sender, RoutedEventArgs e)
+    {
+        if (_navigation.CanGoBack)
+            _navigation.GoBack();
+    }
 }

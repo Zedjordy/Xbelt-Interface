@@ -6,10 +6,24 @@
 
     <StackPanel Margin="44">
 
+        <StackPanel 
+            Orientation="Horizontal"
+            VerticalAlignment="Center">
+
+            <!--<Button>
+                <SymbolIcon
+                            Symbol="Back"
+                            Width="24"
+                            Height="24"
+                            Margin="0,0,16,0"
+                            VerticalAlignment="Center"/>
+            </Button>-->
+
         <TextBlock Text="Message Configuration"
                    FontSize="32"
                    FontWeight="SemiBold"
                    Margin="0,0,0,20"/>
+        </StackPanel>
 
         <Grid ColumnDefinitions="*,*"
               ColumnSpacing="20">

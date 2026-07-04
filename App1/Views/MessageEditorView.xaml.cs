@@ -15,7 +15,10 @@ public sealed partial class MessageEditorView : UserControl
     }
 
     public event EventHandler<MessageToken> InsertTokenRequested;
+    public event EventHandler<MessageToken> RemoveTokenRequested;
 
+
+    /*............................................................................*/
     public static readonly DependencyProperty HeaderProperty =
         DependencyProperty.Register(
             nameof(Header),                         //Property name
@@ -28,7 +31,10 @@ public sealed partial class MessageEditorView : UserControl
         get => (string)GetValue(HeaderProperty);
         set => SetValue(HeaderProperty, value);
     }
+    /*............................................................................*/
 
+
+    /*............................................................................*/
     public static readonly DependencyProperty AvailableTokensProperty =
         DependencyProperty.Register(
             nameof(AvailableTokens),                //Property name
@@ -41,7 +47,10 @@ public sealed partial class MessageEditorView : UserControl
         get => GetValue(AvailableTokensProperty);
         set => SetValue(AvailableTokensProperty, value);
     }
+    /*............................................................................*/
 
+
+    /*............................................................................*/
     public static readonly DependencyProperty MessageTokensProperty =
         DependencyProperty.Register(
             nameof(MessageTokens),                  //Property name
@@ -54,7 +63,10 @@ public sealed partial class MessageEditorView : UserControl
         get => GetValue(MessageTokensProperty);
         set => SetValue(MessageTokensProperty, value);
     }
+    /*............................................................................*/
 
+
+    /*............................................................................*/
     public static readonly DependencyProperty SelectedTokenProperty =
         DependencyProperty.Register(
             nameof(SelectedToken),                  //Property name
@@ -62,11 +74,15 @@ public sealed partial class MessageEditorView : UserControl
             typeof(MessageEditorView),              //Property owner
             new PropertyMetadata(null));            //initial value    
 
-    public object SelectedToken
+    public MessageToken SelectedToken
     {
-        get => GetValue(SelectedTokenProperty);
+        get => (MessageToken)MessageList.SelectedItem;
         set => SetValue(SelectedTokenProperty, value);
     }
+    /*............................................................................*/
+
+
+    /*............................................................................*/
 
     public static readonly DependencyProperty PreviewProperty =
         DependencyProperty.Register(
@@ -74,16 +90,21 @@ public sealed partial class MessageEditorView : UserControl
             typeof(string),                         //types accepted
             typeof(MessageEditorView),              //Property owner
             new PropertyMetadata(string.Empty));    //initial value
-
     public string Preview
     {
         get => (string)GetValue(PreviewProperty);
         set => SetValue(PreviewProperty, value);
     }
+    /*............................................................................*/
+
+
 
     private void Delete_Click(object sender, RoutedEventArgs e)
     {
-        // opzionale: meglio gestirlo via ICommand nel VM
+        if (MessageList.SelectedItem is MessageToken token)
+        {
+            RemoveTokenRequested?.Invoke(this, token);
+        }
     }
 
     private void Available_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
@@ -91,6 +112,14 @@ public sealed partial class MessageEditorView : UserControl
         if (AvailableList.SelectedItem is MessageToken token)
         {
             InsertTokenRequested?.Invoke(this, token);
+        }
+    }
+
+    private void SelectedInToken(object sender, RoutedEventArgs e)
+    {
+        if (AvailableList.SelectedItem is MessageToken token)
+        {
+            
         }
     }
 

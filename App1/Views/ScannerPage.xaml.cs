@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 using SettingsClone.Models;
 using SettingsClone.Services;
 using SettingsClone.ViewModels;
@@ -13,21 +14,20 @@ public sealed partial class ScannerPage : Page
     public ScannerPageViewModel ViewModel { get; }
 
 
-    public ScannerPage(ScannerPageViewModel vm)
+    public ScannerPage()
     {
         InitializeComponent();
 
-        ViewModel = vm;
-        DataContext = vm;
+        ViewModel = App.Services.GetRequiredService<ScannerPageViewModel>();
+        DataContext = ViewModel;
     }
 
 
-    public void OnNavigatedTo(object? parameter)
-    {
-        //if (parameter is ObservableCollection<ScannerSettings> settings)
-        //{
-        //    ViewModel.Load(settings);
-        //}
-    }
+protected override void OnNavigatedTo(NavigationEventArgs e)
+{
+    base.OnNavigatedTo(e);
+
+    var param = (string)e.Parameter;
+}
 
 }

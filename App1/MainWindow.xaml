@@ -3,35 +3,52 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <NavigationView x:Name="NavView"
-                    PaneDisplayMode="Left"
-                    IsBackButtonVisible="Collapsed"
-                    SelectionChanged="NavView_SelectionChanged">
+    <Grid>
 
-        <NavigationView.MenuItems>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="48"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
-            <!-- Scanner -->
-            <NavigationViewItem Tag="Scanner"
+        <!-- TITLE BAR -->
+        <Grid x:Name="AppTitleBar" Grid.Row="0" Padding="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Button                     
+                VerticalAlignment="Center"
+                Content="←"
+                Click="Back_Click"
+                Background="RoyalBlue"
+                Width="100">                
+            </Button>
+
+        </Grid>
+
+        <NavigationView Grid.Row="1"
+            x:Name="NavView"
+            PaneDisplayMode="Left"
+            IsBackButtonVisible="Collapsed"
+            SelectionChanged="NavView_SelectionChanged">
+
+            <NavigationView.MenuItems>
+
+                <!-- Scanner -->
+                <NavigationViewItem Tag="Scanner"
                                 Content="Scanner">
-                <NavigationViewItem.Icon>
-                    <FontIcon Glyph="&#xE8C8;"/>
-                    <!-- Settings/gear-like system icon -->
-                </NavigationViewItem.Icon>
-            </NavigationViewItem>
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE8C8;"/>
+                        <!-- Settings/gear-like system icon -->
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
 
-            <!-- Scanner -->
-            <NavigationViewItem Tag="Scanner"
-                                Content="Scanner">
-                <NavigationViewItem.Icon>
-                    <FontIcon Glyph="&#xE8C8;"/>
-                    <!-- Settings/gear-like system icon -->
-                </NavigationViewItem.Icon>
-            </NavigationViewItem>
+            </NavigationView.MenuItems>
 
-        </NavigationView.MenuItems>
 
-        <Frame x:Name="ContentFrame"/>
-
-    </NavigationView>
-
+            <Frame x:Name="ContentFrame"/>
+        </NavigationView>
+    </Grid>
 </Window>
