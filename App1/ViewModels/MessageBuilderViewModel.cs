@@ -1,5 +1,6 @@
 ﻿using SettingsClone.Models;
 using SettingsClone.Services;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -14,7 +15,6 @@ public class MessageBuilderViewModel : INotifyPropertyChanged
 
     private readonly INavigationService _nav;
     public ObservableCollection<MessageToken> AvailableTokens { get; } = new();
-
     public ObservableCollection<MessageToken> InMessageTokens => Scanner?.InMessageTokens;
     public ObservableCollection<MessageToken> OutMessageTokens => Scanner?.OutMessageTokens;
 
@@ -31,6 +31,7 @@ public class MessageBuilderViewModel : INotifyPropertyChanged
             OnPropertyChanged();
         }
     }
+    #endregion
 
 
     #region CONSTRUCTOR
@@ -38,22 +39,30 @@ public class MessageBuilderViewModel : INotifyPropertyChanged
     {
         _nav = nav;
 
-        Initialize(nav);
+        //Initialize(nav);
         Seed();
     }
     #endregion
 
 
-    private MessageToken? _selectedToken;
-    //private ScannerSettings? _model;
-    #endregion
-
-    public MessageToken? SelectedToken
+    private MessageToken? _selectedInToken;
+    public MessageToken? SelectedInToken
     {
-        get => _selectedToken;
+        get => _selectedInToken;
+        set
+        {            
+            _selectedInToken = value;
+            OnPropertyChanged();
+        }
+    }
+
+    private MessageToken? _selectedOutToken;
+    public MessageToken? SelectedOutToken
+    {
+        get => _selectedOutToken;
         set
         {
-            _selectedToken = value;
+            _selectedOutToken = value;
             OnPropertyChanged();
         }
     }
@@ -79,18 +88,33 @@ public class MessageBuilderViewModel : INotifyPropertyChanged
         AvailableTokens.Add(new() { Type = TokenType.Barcode, Name = "Barcode" });
         AvailableTokens.Add(new() { Type = TokenType.Date, Name = "Date" });
         AvailableTokens.Add(new() { Type = TokenType.Time, Name = "TimeStamp" });
-        AvailableTokens.Add(new() { Type = TokenType.Constant, Name = "Constant" });
+        AvailableTokens.Add(new() { Type = TokenType.Constant, Name = "Constant" });       
         AvailableTokens.Add(new() { Type = TokenType.ETX, Name = "ETX", Value = "\x03", Length = 1});
     }
 
     public void InsertInToken(MessageToken token)
     {
-        Scanner.InMessageTokens.Add(token);
+        Scanner.InMessageTokens.Add(new MessageToken
+        {
+            Id = Guid.NewGuid(),
+            Name = token.Name,
+            Value = token.Value,
+            Length = token.Length,
+            Type = token.Type
+            
+        });
     }
 
     public void InsertOutToken(MessageToken token)
     {
-        Scanner.OutMessageTokens.Add(token);
+        Scanner.OutMessageTokens.Add(new MessageToken
+        {
+            Id = Guid.NewGuid(),
+            Name = token.Name,
+            Value = token.Value,
+            Length = token.Length,
+            Type = token.Type
+        });
     }
 
     public void InsertToken(MessageToken token, int index = -1)
@@ -132,12 +156,14 @@ public class MessageBuilderViewModel : INotifyPropertyChanged
             if(editor.Name == "InEditor")
             {
                 Scanner.InMessageTokens.Remove(token);
+                //SelectedInToken = 
             }
             else
             {
                 Scanner.OutMessageTokens.Remove(token);
             }
         }
+        
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -145,12 +171,16 @@ public class MessageBuilderViewModel : INotifyPropertyChanged
     private void OnPropertyChanged([CallerMemberName] string? name = null)
         => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
+    public void UpdateSelectedTokenProperty(object obj, MessageToken token)
+    {
+        SelectedInToken = token;
+    }
 
     public void Initialize(object parameter)
     {
         if (parameter is ScannerSettings scanner)
         {
-            _scanner = scanner;
+            Scanner = scanner;
 
             //Aggiorna Preview dopo riordinamento
             scanner.InMessageTokens.CollectionChanged += (_, __) => OnPropertyChanged(nameof(InPreview));

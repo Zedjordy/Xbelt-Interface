@@ -27,18 +27,7 @@ public class NavigationService : INavigationService
         if (_frame is null)
             throw new InvalidOperationException("Frame non inizializzato");
 
-        // 1. crea la Page via DI
-        //var page = _provider.GetRequiredService<TPage>();
-
-        // 2. set frame content
-        //_frame.Content = page;
         _frame.Navigate(typeof(TPage), parameter);
-
-        // 3. dispatch parameter manuale
-        //if (page is INavigationAware aware)
-        //{
-        //    aware.OnNavigatedTo(parameter);
-        //}
 
         Debug.WriteLine(_frame.CanGoBack);
     }

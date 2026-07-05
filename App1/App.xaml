@@ -12,6 +12,7 @@
                 <ResourceDictionary Source="/Themes/PageButton.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <conv:ProtocolConverter x:Key="ProtocolConverter"/>
+            <conv:MessageTokenColorConvert x:Key="MessageTokenColorConvert"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

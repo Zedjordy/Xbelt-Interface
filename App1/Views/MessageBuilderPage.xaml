@@ -8,18 +8,20 @@
 
         <StackPanel 
             Orientation="Horizontal"
-            VerticalAlignment="Center">
+            VerticalAlignment="Center"
+            Spacing="5">
 
-            <!--<Button>
-                <SymbolIcon
-                            Symbol="Back"
-                            Width="24"
-                            Height="24"
-                            Margin="0,0,16,0"
-                            VerticalAlignment="Center"/>
-            </Button>-->
-
-        <TextBlock Text="Message Configuration"
+            <TextBlock Text="{Binding Scanner.Name, Mode=OneWay}"
+                   FontSize="32"
+                   FontWeight="SemiBold"
+                   Margin="0,0,0,20"/>
+            
+            <TextBlock Text=" > "
+                   FontSize="32"
+                   FontWeight="SemiBold"
+                   Margin="0,0,0,20"/>
+            
+            <TextBlock Text="Message Configuration"
                    FontSize="32"
                    FontWeight="SemiBold"
                    Margin="0,0,0,20"/>
@@ -33,7 +35,7 @@
                 Header="Inbound"
                 AvailableTokens="{Binding AvailableTokens}"
                 MessageTokens="{Binding InMessageTokens}"
-                SelectedToken="{Binding SelectedInToken, Mode=TwoWay}"
+                SelectedToken="{Binding SelectedInToken, Mode=OneWay}"
                 Preview="{Binding InPreview}"/>
 
             <views:MessageEditorView

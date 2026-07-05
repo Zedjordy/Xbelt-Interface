@@ -17,7 +17,6 @@ public sealed partial class MessageEditorView : UserControl
     public event EventHandler<MessageToken> InsertTokenRequested;
     public event EventHandler<MessageToken> RemoveTokenRequested;
 
-
     /*............................................................................*/
     public static readonly DependencyProperty HeaderProperty =
         DependencyProperty.Register(
@@ -70,13 +69,15 @@ public sealed partial class MessageEditorView : UserControl
     public static readonly DependencyProperty SelectedTokenProperty =
         DependencyProperty.Register(
             nameof(SelectedToken),                  //Property name
-            typeof(object),                         //types accepted
+            typeof(MessageToken),                         //types accepted
             typeof(MessageEditorView),              //Property owner
-            new PropertyMetadata(null));            //initial value    
+            new PropertyMetadata(null, OnSelectedTokenChanged));            //initial value    
 
     public MessageToken SelectedToken
     {
-        get => (MessageToken)MessageList.SelectedItem;
+        get => (MessageToken)GetValue(SelectedTokenProperty);
+        //get => (MessageToken)MessageList.SelectedItem;
+        //get => GetValue(SelectedTokenProperty);
         set => SetValue(SelectedTokenProperty, value);
     }
     /*............................................................................*/
@@ -117,10 +118,6 @@ public sealed partial class MessageEditorView : UserControl
 
     private void SelectedInToken(object sender, RoutedEventArgs e)
     {
-        if (AvailableList.SelectedItem is MessageToken token)
-        {
-            
-        }
     }
 
     // DRAG FROM MESSAGE (MOVE)
@@ -142,32 +139,24 @@ public sealed partial class MessageEditorView : UserControl
     private async void Message_Drop(object sender, DragEventArgs e)
     {
     }
-        //    if (!e.DataView.Contains(StandardDataFormats.Text))
-        //        return;
 
-        //    var text = await e.DataView.GetTextAsync();
+    private static void OnSelectedTokenChanged(
+    DependencyObject d,
+    DependencyPropertyChangedEventArgs e)
+    {
+        var control = (MessageEditorView)d;
 
-        //    if (!Guid.TryParse(text, out var id))
-        //        return;
+        var newValue = e.NewValue as MessageToken;
 
-        //    var token = AvailableTokens.FirstOrDefault(x => x.Id == id);
+        // sincronizza UI interna se serve
+        control.MessageList.SelectedItem = newValue;
 
-        //    if (token != null)
-        //    {
-        //        InsertToken(token);
-        //        return;
-        //    }
-
-        //    var existing = MessageTokens.FirstOrDefault(x => x.Id == id);
-
-        //    if (existing != null)
-        //    {
-        //        var index = MessageTokens.IndexOf(existing);
-        //        MessageTokens.Remove(existing);
-        //        MessageTokens.Insert(index, existing);
-        //    }
-        //}
-
-
-
+        // opzionale: reset visual state se null
+        if (newValue == null)
+        {
+            control.MessageList.SelectedItem = new MessageToken();
+        }
     }
+
+
+}

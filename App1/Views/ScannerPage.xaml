@@ -30,7 +30,8 @@
                 MaxWidth="1100"
                 Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
 
-                <StackPanel Spacing="20">
+                <StackPanel Spacing="20"
+                            HorizontalAlignment="Stretch">
 
                     <Button Content="+ Add Scanner"                    
                             FontWeight="Normal"
@@ -46,31 +47,36 @@
 
                                 <controls:Expander
                                     IsExpanded="False"
-                                    Margin="0,0,0,10">
+                                    ExpandDirection="Down"
+                                    Margin="0,0,0,10"
+                                    HorizontalAlignment="Stretch">
 
                                     <!-- HEADER STYLE WINDOWS SETTINGS -->
                                     <controls:Expander.Header >
                                         
                                         <Grid Height="Auto"
-                                              Width="950"
-                                              Padding="10">
+                                              Padding="10"
+                                              CornerRadius="5">
+                                            
                                                 <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="*" />
-                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
                                                 </Grid.ColumnDefinitions>
 
                                                 <TextBlock                                                
                                                     Grid.Column="0"
                                                     VerticalAlignment="Center"
                                                     HorizontalAlignment="Left"
-                                                    Text="Scanner "
+                                                    Text="{Binding Name}"
                                                     FontSize="20"
                                                     FontWeight="SemiBold"/>
 
-                                                <ToggleSwitch                                                    
+                                                <ToggleSwitch           
                                                     Grid.Column="1"
                                                     VerticalAlignment="Center"
+                                                    HorizontalContentAlignment="Stretch"
                                                     HorizontalAlignment="Right"
+                                                    MinWidth="100"
                                                     OnContent="Enabled"
                                                     OffContent="Disabled"
                                                     IsOn="{Binding IsEnabled, Mode=TwoWay}"/>
@@ -80,30 +86,34 @@
                                     </controls:Expander.Header>
                                     <StackPanel Spacing="10">
                                         <!-- ENABLE -->
-                                        <!--<Grid>
+                                        <Grid>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="*" MinWidth="450"/>
                                                 <ColumnDefinition Width="Auto" />
                                             </Grid.ColumnDefinitions>
 
                                             <StackPanel>
-                                                <TextBlock Text="Enable scanner"
+                                                <TextBlock Text="Name"
                                                        FontWeight="SemiBold"
                                                        TextWrapping="WrapWholeWords"/>
 
-                                                <TextBlock Text="Turn scanner service on or off."
+                                                <TextBlock Text="Device Name"
                                                        Opacity="0.7"
                                                        TextWrapping="WrapWholeWords"/>
                                             </StackPanel>
 
-                                            <ToggleSwitch
-                                            IsOn="{Binding IsEnabled, Mode=TwoWay}"
-                                            HorizontalAlignment="Right"
-                                            Margin="0,0,-70,0"/>
+                                            <TextBox                                                
+                                                    Grid.Column="1"
+                                                    CornerRadius="1"
+                                                    VerticalAlignment="Center"
+                                                    HorizontalAlignment="Center"
+                                                    Text="{Binding Name, Mode=TwoWay}"
+                                                    FontSize="20"
+                                                    FontWeight="SemiBold"/>
                                         </Grid>
 
                                         <Rectangle Height="1"
-                                               Fill="{ThemeResource DividerStrokeColorDefaultBrush}"/>-->
+                                               Fill="{ThemeResource DividerStrokeColorDefaultBrush}"/>
 
                                         <!-- PROTOCOL -->
                                         <Grid>

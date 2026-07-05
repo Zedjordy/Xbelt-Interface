@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using SettingsClone.Services;
 using SettingsClone.Views;
+using System.Linq;
 
 
 namespace SettingsClone;
@@ -19,7 +20,11 @@ public sealed partial class MainWindow : Window
         _navigation = navigation;
 
         _navigation.Initialize(ContentFrame);
-        _navigation.Navigate<ScannerPage>();
+        //_navigation.Navigate<ScannerPage>();
+        
+        NavView.SelectedItem = NavView.MenuItems
+            .OfType<NavigationViewItem>()
+            .First(x => x.Tag.ToString() == "Scanner");
 
 
     }

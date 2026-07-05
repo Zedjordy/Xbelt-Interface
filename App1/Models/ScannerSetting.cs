@@ -11,6 +11,16 @@ public class ScannerSettings : ViewModelBase
 
     public Guid Id { get; } = Guid.NewGuid();
 
+    private string _Name = "Scanner"; 
+    public string Name
+    {
+        get => _Name;
+        set
+        {
+            _Name = value;
+            OnPropertyChanged();
+        }
+    }
 
 
     private bool _IsEnabled = true;

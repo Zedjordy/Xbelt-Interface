@@ -66,13 +66,5 @@ public class ScannerPageViewModel : ViewModelBase
         _nav.Navigate<MessageBuilderPage>(scanner);
     }
 
-    public void Load(object parameter)
-    {
-        if (parameter is ObservableCollection<ScannerSettings> scanner)
-        {
-            //Scanners = scanner;
-        }
-    }
-
     #endregion
 }
