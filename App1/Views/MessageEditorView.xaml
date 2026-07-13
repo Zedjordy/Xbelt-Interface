@@ -117,18 +117,25 @@
                                FontWeight="ExtraBold"
                                FontSize="18"/>
                     </Border>
-
-                    <TextBlock Text="Length"
-                               FontWeight="SemiBold"/>                    
-                    <TextBox Text="{x:Bind SelectedToken.Length, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"                             
-                             PlaceholderText="Value (if applicable)"/>
                     
-                    <TextBlock Text="Value"
-                               FontWeight="SemiBold"/>
-                    <TextBox Text="{x:Bind SelectedToken.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                             PlaceholderText="Value (if applicable)"/>
+                    <!-- Lenght-->
+                    <TextBlock 
+                        Text="Length"
+                        FontWeight="SemiBold"/>                    
+                    <NumberBox 
+                        Value="{x:Bind SelectedToken.Length, Mode=TwoWay}"                             
+                        PlaceholderText="Value (if applicable)"/>
+                    
+                    <!-- Value-->
+                    <TextBlock 
+                        Text="Value"
+                        FontWeight="SemiBold"/>
+                    <TextBox 
+                        Text="{x:Bind SelectedToken.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        PlaceholderText="Value (if applicable)"/>
 
-                    <Button Content="Delete Selected Token"
+                    <!-- Delete Token-->
+                    <Button Content="Delete Token"
                             Foreground="Black"
                             Background="Goldenrod"
                             FontWeight="SemiBold"

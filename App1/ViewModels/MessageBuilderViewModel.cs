@@ -70,12 +70,12 @@ public class MessageBuilderViewModel : INotifyPropertyChanged
     public string InPreview =>
         Scanner == null
             ? string.Empty
-            : string.Concat(Scanner.InMessageTokens.Select(t => $"<{t.Name}>"));
+            : string.Concat(Scanner.InMessageTokens.Select(t => $"<{t.Name} ({t.Length})>"));
 
     public string OutPreview =>
         Scanner == null
             ? string.Empty
-            : string.Concat(Scanner.OutMessageTokens.Select(t => $"<{t.Name}>"));
+            : string.Concat(Scanner.OutMessageTokens.Select(t => $"<{t.Name} ({t.Length})>"));
 
 
 

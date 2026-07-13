@@ -116,6 +116,18 @@ public class ScannerSettings : ViewModelBase
         set { if (value) Protocol = ScannerSettings.ProtocolType.TCP; }
     }
 
+    private int _TxDelay = 0;
+    public int TxDelay
+    {
+        get => _TxDelay;
+        set
+        {
+            if (value < 0 || value > 65535) return;
+            _TxDelay = value;
+            OnPropertyChanged();
+        }
+    }
+
     public ObservableCollection<MessageToken> InMessageTokens { get; } = new() { new MessageToken { Type = TokenType.STX, Name = "STX", Value = "\x02", Length = 1 } };
     public ObservableCollection<MessageToken> OutMessageTokens { get; } = new() { new MessageToken { Type = TokenType.STX, Name = "STX", Value = "\x02", Length = 1 } };
 
