@@ -3,6 +3,7 @@ using SettingsClone.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -156,7 +157,6 @@ public class MessageBuilderViewModel : INotifyPropertyChanged
             if(editor.Name == "InEditor")
             {
                 Scanner.InMessageTokens.Remove(token);
-                //SelectedInToken = 
             }
             else
             {
@@ -183,7 +183,10 @@ public class MessageBuilderViewModel : INotifyPropertyChanged
             Scanner = scanner;
 
             //Aggiorna Preview dopo riordinamento
+            scanner.InMessageTokens.CollectionChanged += Devices_CollectionChanged;            
             scanner.InMessageTokens.CollectionChanged += (_, __) => OnPropertyChanged(nameof(InPreview));
+
+            scanner.OutMessageTokens.CollectionChanged += Devices_CollectionChanged;
             scanner.OutMessageTokens.CollectionChanged += (_, __) => OnPropertyChanged(nameof(OutPreview));
         }
 
@@ -192,6 +195,30 @@ public class MessageBuilderViewModel : INotifyPropertyChanged
 
         OnPropertyChanged(nameof(InMessageTokens));
         OnPropertyChanged(nameof(OutMessageTokens));
+
+    }
+
+    private void Devices_CollectionChanged(
+        object? sender,
+        NotifyCollectionChangedEventArgs e)
+    {
+        if (e.NewItems != null)
+        {
+            foreach (MessageToken item in e.NewItems)
+            {
+                item.PropertyChanged += Item_PropertyChanged;
+            }
+        }
+    }
+
+    private void Item_PropertyChanged(
+    object? sender,
+    PropertyChangedEventArgs e)
+    {
+        
+        // un elemento è cambiato
+        OnPropertyChanged(nameof(InPreview));
+        OnPropertyChanged(nameof(OutPreview));
     }
     #endregion
 }

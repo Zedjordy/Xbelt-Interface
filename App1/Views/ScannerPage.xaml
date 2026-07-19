@@ -48,8 +48,8 @@
                             Content="+ Add Scanner"                    
                             FontWeight="Normal"
                             FontSize="16"
-                            Background="DarkGreen"
-                            HorizontalAlignment="Left"
+                            Background="SeaGreen"
+                            HorizontalAlignment="Stretch"
                             Command="{Binding ViewModel.AddScannerCommand, ElementName=RootPage}"
                             CommandParameter="{Binding}"/>
 
@@ -65,7 +65,7 @@
                                     HorizontalAlignment="Stretch">
 
                                     <!-- HEADER STYLE WINDOWS SETTINGS -->
-                                    <controls:Expander.Header >
+                                    <controls:Expander.Header>
 
                                         <Grid Height="Auto"
                                               Padding="10"
@@ -328,17 +328,18 @@
 
 
                                         <!-- RESPONSE SETTINGS -->
-                                        <StackPanel Grid.Row="6">
+                                        <Grid Grid.Row="6">
                                             <controls:Expander
                                                 IsExpanded="False"
-                                                HorizontalAlignment="Stretch">
+                                                HorizontalAlignment="Stretch"
+                                                HorizontalContentAlignment="Stretch">
 
                                                 <!-- HEADER STYLE WINDOWS SETTINGS -->
                                                 <controls:Expander.Header>
 
                                                     <Grid Padding="20">
                                                         <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition MinWidth="850" MaxWidth="850" />
+                                                            <ColumnDefinition Width="*"/>
                                                         </Grid.ColumnDefinitions>
 
                                                         <StackPanel Spacing="2">
@@ -376,27 +377,113 @@
                                                 </controls:Expander.Header>
 
                                                 <!-- Response Configuration -->
-                                                <Grid Padding="2">
+                                                <Grid Padding="20"
+                                                      ColumnSpacing="50">
                                                     <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition MinWidth="850" MaxWidth="850" />
-                                                        <ColumnDefinition Width="Auto" />
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="*" />
                                                     </Grid.ColumnDefinitions>
 
-                                                    <StackPanel Spacing="20" 
-                                                                    Margin="0,20,0,20" 
-                                                                    MinWidth="350"
-                                                                    HorizontalAlignment="Left"
-                                                                    Grid.Column="0">
+                                                    <StackPanel Grid.Column="0"
+                                                                Spacing="25"                                                               
+                                                                HorizontalAlignment="Left">
+                                                        
+                                                        <NumberBox Header="TX Response time (ms)"
+                                                                   PlaceholderText="0 ms"
+                                                                   Minimum="0"
+                                                                   Maximum="9999"
+                                                                   Value="{Binding TxDelay, Mode=TwoWay}"/>
 
-                                                        <NumberBox Header="Transmisison Response time delay (ms)"
-                                                                 PlaceholderText="0ms"
-                                                                 Text="{Binding TxDelay, Mode=TwoWay}"/>
+                                                        <Slider                                                                                 
+                                                            Minimum="0"
+                                                            Maximum="100"
+                                                            Background="IndianRed"
+                                                            StepFrequency="1"
+                                                            TickFrequency="1"                                                            
+                                                            TickPlacement="Outside"
+                                                            Value="{Binding NOREAD_perc, Mode=TwoWay}">
+
+                                                            <Slider.Header>
+                                                                <Grid Width="300">
+                                                                    <TextBlock Text="NO READ %"/>
+
+                                                                    <TextBlock HorizontalAlignment="Center"
+                                                                               Text="{Binding NOREAD_perc, Mode=OneWay}"/>
+                                                                </Grid>
+                                                            </Slider.Header>
+
+                                                        </Slider>
+
+                                                        <Slider                                                                                 
+                                                            Minimum="0"
+                                                            Maximum="100"
+                                                            Background="Goldenrod"
+                                                            StepFrequency="1"
+                                                            TickFrequency="1"                                                            
+                                                            TickPlacement="Outside"
+                                                            Value="{Binding MULTIREAD_perc, Mode=TwoWay}">
+
+                                                            <Slider.Header>
+                                                                <Grid Width="300">
+                                                                    <TextBlock Text="MULTI READ %"/>
+                                                                    
+                                                                    <TextBlock HorizontalAlignment="Center"
+                                                                               Text="{Binding MULTIREAD_perc, Mode=OneWay}"/>
+                                                                </Grid>
+                                                            </Slider.Header>
+
+                                                        </Slider>
+
+                                                        <Slider                         
+                                                            IsHitTestVisible="False"
+                                                            Minimum="0"
+                                                            Maximum="100"
+                                                            Background="DarkGreen"
+                                                            StepFrequency="1"
+                                                            TickFrequency="1"                                                            
+                                                            TickPlacement="Outside"
+                                                            Value="{Binding GOODREAD_perc, Mode=TwoWay}">
+
+                                                            <Slider.Header>
+                                                                <Grid Width="300">
+                                                                    <TextBlock Text="GOOD READ %"/>
+
+                                                                    <TextBlock HorizontalAlignment="Center"
+                                                                               Text="{Binding GOODREAD_perc, Mode=OneWay}"/>
+                                                                </Grid>
+                                                            </Slider.Header>
+
+                                                        </Slider>
 
                                                     </StackPanel>
+                                                    
+
+                                                    <StackPanel Grid.Column="1"
+                                                                Spacing="20" 
+                                                                HorizontalAlignment="Left">
+                                                        
+                                                        <NumberBox Header="Tolerance"
+                                                                   PlaceholderText="+-ms"
+                                                                   Minimum="0"
+                                                                   Maximum="9999"
+                                                                   Value="{Binding TxDelay, Mode=TwoWay}"/>
+                                                        
+                                                        <TextBox Header="NOREAD Character"
+                                                                 TextWrapping="Wrap"
+                                                                 MaxLength="1"
+                                                                 Text="{Binding NOREAD_char, Mode=TwoWay}"/>
+
+                                                        <TextBox Header="MULTIPLE Character"
+                                                                 TextWrapping="Wrap"
+                                                                 MaxLength="1"
+                                                                 Text="{Binding MULTIREAD_char, Mode=TwoWay}"/>
+                                                        
+                                                    </StackPanel>
+                                                    
                                                 </Grid>
 
                                             </controls:Expander>
-                                        </StackPanel>
+                                        </Grid>
 
 
 
@@ -413,12 +500,12 @@
 
                                             <!-- LEFT -->
                                             <Button Content="Delete Scanner"
-                                                FontWeight="SemiBold"
-                                                Foreground="Black"
-                                                Background="Goldenrod"
-                                                HorizontalAlignment="Left"
-                                                Command="{Binding ViewModel.RemoveScannerCommand, ElementName=RootPage}"
-                                                CommandParameter="{Binding}"/>
+                                                    FontWeight="SemiBold"
+                                                    Background="IndianRed"
+                                                    HorizontalAlignment="Left"
+                                                    FontStyle="Normal"
+                                                    Command="{Binding ViewModel.RemoveScannerCommand, ElementName=RootPage}"
+                                                    CommandParameter="{Binding}"/>
 
                                             <!-- RIGHT -->
                                             <StackPanel Grid.Column="1"

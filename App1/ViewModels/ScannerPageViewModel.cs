@@ -33,6 +33,7 @@ public class ScannerPageViewModel : ViewModelBase
         OpenSocketCommand = new RelayCommand(OpenSocket);
         AddScannerCommand = new RelayCommand(AddScanner);
         RemoveScannerCommand = new RelayCommand(RemoveScanner);
+
     }
     #endregion
 

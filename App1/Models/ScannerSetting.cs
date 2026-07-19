@@ -3,11 +3,15 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.ComponentModel.Design;
+using System.Runtime.CompilerServices;
 
 namespace SettingsClone.Models;
 
 public class ScannerSettings : ViewModelBase
 {
+
+
 
     public Guid Id { get; } = Guid.NewGuid();
 
@@ -116,7 +120,7 @@ public class ScannerSettings : ViewModelBase
         set { if (value) Protocol = ScannerSettings.ProtocolType.TCP; }
     }
 
-    private int _TxDelay = 0;
+    private int _TxDelay;
     public int TxDelay
     {
         get => _TxDelay;
@@ -128,8 +132,78 @@ public class ScannerSettings : ViewModelBase
         }
     }
 
+    private uint _NOREAD_perc;
+    public uint NOREAD_perc
+    {
+        get => _NOREAD_perc;
+        set
+        {
+            int delta = (int)(value - _NOREAD_perc);
+
+            if (delta > 0)
+            {
+                MULTIREAD_perc = (uint)Math.Max(0, MULTIREAD_perc - delta);
+            }
+
+            if (SetProperty(ref _NOREAD_perc, value))
+            {
+                OnPropertyChanged(nameof(GOODREAD_perc));
+            }
+            OnPropertyChanged();
+        }
+    }
+
+    private uint _MULTIREAD_perc;
+    public uint MULTIREAD_perc
+    {
+        get => _MULTIREAD_perc;
+        set
+        {
+            int delta = (int)(value - _MULTIREAD_perc);
+
+            if (delta > 0)
+            {
+                NOREAD_perc = (uint)Math.Max(0, NOREAD_perc - delta);
+            }
+            if (SetProperty(ref _MULTIREAD_perc, value))
+            {
+                OnPropertyChanged(nameof(GOODREAD_perc));
+            }
+            OnPropertyChanged();
+        }
+    }
+
+    private uint _GOODREAD_perc = 100;
+    public uint GOODREAD_perc => 100 - NOREAD_perc - MULTIREAD_perc;
+    
+
+
+    private char _NOREAD_char = '?';
+    public char NOREAD_char
+    {
+        get => _NOREAD_char;
+        set
+        {
+            _NOREAD_char = value;
+            OnPropertyChanged();
+        }
+    }
+
+    private char _MULTIREAD_char = '9';
+    public char MULTIREAD_char
+    {
+        get => _MULTIREAD_char;
+        set
+        {
+            _MULTIREAD_char = value;
+            OnPropertyChanged();
+        }
+    }
+
     public ObservableCollection<MessageToken> InMessageTokens { get; } = new() { new MessageToken { Type = TokenType.STX, Name = "STX", Value = "\x02", Length = 1 } };
     public ObservableCollection<MessageToken> OutMessageTokens { get; } = new() { new MessageToken { Type = TokenType.STX, Name = "STX", Value = "\x02", Length = 1 } };
+
+    
 
     public enum ProtocolType
     {

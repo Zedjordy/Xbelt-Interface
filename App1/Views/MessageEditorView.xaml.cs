@@ -158,5 +158,9 @@ public sealed partial class MessageEditorView : UserControl
         }
     }
 
-
+    private void NumberBox_ValueChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)
+    {
+        if (args.NewValue != sender.Value)
+            return;
+    }
 }

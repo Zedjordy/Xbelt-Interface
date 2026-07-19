@@ -35,7 +35,7 @@
                 Header="Inbound"
                 AvailableTokens="{Binding AvailableTokens}"
                 MessageTokens="{Binding InMessageTokens}"
-                SelectedToken="{Binding SelectedInToken, Mode=OneWay}"
+                SelectedToken="{Binding SelectedInToken, Mode=TwoWay}"
                 Preview="{Binding InPreview}"/>
 
             <views:MessageEditorView

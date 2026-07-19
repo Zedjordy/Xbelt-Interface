@@ -11,13 +11,13 @@ public class MessageToken : ViewModelBase
     public TokenType Type { get; set; }
     public string Name { get; set; } = string.Empty;
 
-    private uint _length = 0;
+    private uint _length;
     public uint Length
     {
         get => _length;
         set
         {
-            _length = Math.Max(0, value);
+            _length = value;
             OnPropertyChanged();
         }
     }
@@ -31,7 +31,6 @@ public class MessageToken : ViewModelBase
             if(value is not null)
             {
                 _value = value;
-                //Length = (uint)value.Length;
                 OnPropertyChanged();
             }
         }
