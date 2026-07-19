@@ -138,9 +138,9 @@ public class ScannerSettings : ViewModelBase
         get => _NOREAD_perc;
         set
         {
-            int delta = (int)(value - _NOREAD_perc);
+            int delta = (int)value - (int)_NOREAD_perc;
 
-            if (delta > 0)
+            if (delta > 0 && ((GOODREAD_perc - delta) <= 0))
             {
                 MULTIREAD_perc = (uint)Math.Max(0, MULTIREAD_perc - delta);
             }
@@ -149,7 +149,6 @@ public class ScannerSettings : ViewModelBase
             {
                 OnPropertyChanged(nameof(GOODREAD_perc));
             }
-            OnPropertyChanged();
         }
     }
 
@@ -159,9 +158,9 @@ public class ScannerSettings : ViewModelBase
         get => _MULTIREAD_perc;
         set
         {
-            int delta = (int)(value - _MULTIREAD_perc);
+            int delta = (int)value - (int)_MULTIREAD_perc;
 
-            if (delta > 0)
+            if (delta > 0 && ((GOODREAD_perc - delta) <= 0))
             {
                 NOREAD_perc = (uint)Math.Max(0, NOREAD_perc - delta);
             }
@@ -169,7 +168,6 @@ public class ScannerSettings : ViewModelBase
             {
                 OnPropertyChanged(nameof(GOODREAD_perc));
             }
-            OnPropertyChanged();
         }
     }
 
