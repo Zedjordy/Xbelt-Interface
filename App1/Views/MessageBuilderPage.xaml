@@ -2,11 +2,188 @@
     x:Class="SettingsClone.Views.MessageBuilderPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:views="using:SettingsClone.Views">
+    xmlns:views="using:SettingsClone.Views"
+    xmlns:vm="using:SettingsClone.ViewModels.Field"
+    xmlns:local="using:SettingsClone.Converters">
 
-    <StackPanel Margin="44">
+
+
+    <Page.Resources>
+
+        <!--......................................................
+        ..................TEXT FIELD TEMPLATE.....................
+        ..........................................................-->
+        <DataTemplate x:Key="TextFieldTemplate"
+            x:DataType="vm:TextFieldViewModel">
+            <Border Padding="10"
+                    CornerRadius="6"
+                    Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}">
+                <StackPanel Spacing="5"
+                            Orientation="Horizontal">
+                    
+                    <TextBlock Text="{Binding Type}" 
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Center"/>
+                    <TextBox Text="{Binding Value, Mode=TwoWay}"/>
+                </StackPanel>
+            </Border>
+        </DataTemplate>
+
+
+        <!--......................................................
+        ..................CHOICE FIELD TEMPLATE...................
+        ..........................................................-->
+        <DataTemplate x:Key="ChoiceFieldTemplate"
+            x:DataType="vm:ChoiceFieldViewModel">
+            <Border Padding="10"
+                    CornerRadius="6"
+                    Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}">
+                
+                <Grid RowDefinitions="Auto, Auto"
+                      RowSpacing="5">
+                    
+                    <Grid Grid.Row="0" 
+                          ColumnDefinitions="Auto,Auto,Auto"
+                          ColumnSpacing="5">
+                        
+                        <TextBlock Grid.Column="0"
+                                   Text="{Binding Type}" 
+                                   HorizontalAlignment="Left"
+                                   VerticalAlignment="Center"/>
+                        
+                        <TextBox x:Name="OptionField" 
+                                 Grid.Column="1"
+                                 MinWidth="50"
+                                 Text="{Binding NewOption, Mode=TwoWay}"/>
+                        
+                        <Button Grid.Column="2"
+                                Command="{Binding AddFieldOptionCommand}"
+                                CommandParameter="{Binding NewOption}">                        
+                            
+                            <SymbolIcon Symbol="Add"                                        
+                                        Margin="0,0,0,0"
+                                        Width="20"
+                                        Height="20"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Center"/>
+                        </Button>
+                    </Grid>
+
+                    <ListView Grid.Row="1"
+                              ItemsSource="{Binding Options, Mode=OneWay}">
+
+                        <ListView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <ItemsStackPanel Orientation="Horizontal"
+                                                 IsHitTestVisible="True"
+                                                 Width="Auto"/>
+                            </ItemsPanelTemplate>
+                        </ListView.ItemsPanel>
+                    </ListView>
+                </Grid>
+
+            </Border>
+        </DataTemplate>
+
+
+        <!--......................................................
+        ..................RANGE FIELD TEMPLATE....................
+        ..........................................................-->
+        <DataTemplate x:Key="RangeFieldTemplate"
+            x:DataType="vm:RangeFieldViewModel">
+            <Border Padding="10"
+                    CornerRadius="6"
+                    Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}">
+
+                <Grid ColumnDefinitions="*,*"
+                      ColumnSpacing="5">
+                    
+                    <TextBlock Grid.Column="0"
+                               Text="{Binding Type}" 
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Left"/>
+
+                    <Grid Grid.Column="1"
+                          RowDefinitions="*,*"   
+                          RowSpacing="5">
+                        
+                        <ComboBox Grid.Row="0"
+                                  HorizontalAlignment="Stretch"
+                                  HorizontalContentAlignment="Center"
+                                  ItemsSource="{Binding Formats, Mode=OneWay}"
+                                  SelectedItem="{Binding Format, Mode=TwoWay}"/>
+                        
+                        <StackPanel Grid.Row="1"
+                                    Orientation="Horizontal" 
+                                    Spacing="2">
+                        
+                            <TextBox Width="70"
+                                     Text="{Binding Start, Mode=TwoWay}"/>                            
+                            
+                            <TextBlock Text="-"/>                       
+                            
+                            <TextBox Width="70"
+                                     Text="{Binding End, Mode=TwoWay}"/>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+
+            </Border>
+        </DataTemplate>
+
+        <!--......................................................
+        ..................COUNTER FIELD TEMPLATE..................
+        ..........................................................-->
+        <DataTemplate x:Key="CounterFieldTemplate"
+            x:DataType="vm:CounterFieldViewModel">
+            <Border Padding="10"
+                    CornerRadius="6"
+                    Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}">
+                <StackPanel Spacing="5"
+                            Orientation="Horizontal">
+
+                    <TextBlock Text="{Binding Type}" 
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Center"/>
+                    <StackPanel Grid.Row="1"
+                                Orientation="Horizontal" 
+                                Spacing="2">
+
+                        <TextBox Width="70"
+                                 Text="{Binding Start, Mode=TwoWay}"/>
+
+                        <TextBlock Text="-"/>
+
+                        <TextBox Width="70"
+                                 Text="{Binding End, Mode=TwoWay}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </DataTemplate>
+
+
+
+
+        <!--......................................................
+        ..................SELECTOR FIELDS TEMPLATE................
+        ..........................................................-->
+        <local:MessageFieldTemplateSelector
+        x:Key="FieldSelector"
+        TextFieldTemplate="{StaticResource TextFieldTemplate}"
+        ChoiceFieldTemplate="{StaticResource ChoiceFieldTemplate}"
+        RangeFieldTemplate="{StaticResource RangeFieldTemplate}"
+        CounterFieldTemplate="{StaticResource CounterFieldTemplate}"/>
+
+
+    </Page.Resources>
+
+
+
+    <Grid RowDefinitions="Auto,*"
+          Margin="44">
 
         <StackPanel 
+            Grid.Row="0"
             Orientation="Horizontal"
             VerticalAlignment="Center"
             Spacing="5">
@@ -27,10 +204,17 @@
                    Margin="0,0,0,20"/>
         </StackPanel>
 
-        <Grid ColumnDefinitions="*,*"
-              ColumnSpacing="20">
+        <Grid 
+            Grid.Row="1"
+            ColumnDefinitions="*,*"
+            RowDefinitions="Auto,Auto"
+            ColumnSpacing="20"
+            RowSpacing="20">
+
 
             <views:MessageEditorView
+                Grid.Row="0"
+                Grid.Column="0"
                 x:Name="InEditor"
                 Header="Inbound"
                 AvailableTokens="{Binding AvailableTokens}"
@@ -39,15 +223,176 @@
                 Preview="{Binding InPreview}"/>
 
             <views:MessageEditorView
-                x:Name="OutEditor"
+                Grid.Row="0"
                 Grid.Column="1"
+                x:Name="OutEditor"
                 Header="Outbound"
                 AvailableTokens="{Binding AvailableTokens}"
                 MessageTokens="{Binding OutMessageTokens}"
                 SelectedToken="{Binding SelectedOutToken, Mode=TwoWay}"
                 Preview="{Binding OutPreview}"/>
 
+
+        
+            <!--......................................................
+            ....................INBOUND TOKEN EDIT.....................
+            ..........................................................-->
+            <Border                 
+                Height="Auto"
+                Grid.Column="0"
+                Grid.Row="1"
+                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+                
+                <Grid 
+                    RowSpacing="10"
+                    ColumnDefinitions="*"
+                    RowDefinitions="*,*,*"
+                    Padding="10">
+
+
+                    <!-- TEXTBOX -->
+                    <TextBox
+                        Grid.Column="0"
+                        Grid.Row="0">
+                        
+                    </TextBox>
+
+                    <!-- SELECTED TOKEN FIELDS -->
+                    <ListView
+                        Grid.Column="0"
+                        Grid.Row="1"
+                        x:Name="OUTTokenField"                        
+                        DataContext="{x:Bind InEditor, Mode=OneWay}"
+                        ItemsSource="{x:Bind InEditor.SelectedToken.Fields, Mode=TwoWay}"
+                        ItemTemplateSelector="{StaticResource FieldSelector}"
+                        CanReorderItems="True"
+                        ReorderMode="Enabled"
+                        MinHeight="70"
+                        Height="Auto"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Stretch"
+                        AllowDrop="True"
+                        DragOver="Message_DragOver"                                  
+                        Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                        Drop="Message_Drop">
+
+                        <ListView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <ItemsStackPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ListView.ItemsPanel>
+                    </ListView>
+
+                    <!-- FIELD LIST -->
+                    <ListView
+                        Grid.Column="0"
+                        Grid.Row="2"
+                        x:Name="INField"
+                        ItemsSource="{Binding Fields, Mode=OneWay}"
+                        DragItemsStarting="Message_DragStarting"
+                        CanDragItems="True">
+
+                        <ListView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <ItemsStackPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ListView.ItemsPanel>
+
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Border Padding="10"
+                                        Width="100"
+                                        CornerRadius="6"
+                                        Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}">
+                                    <TextBlock Text="{Binding Type}" HorizontalAlignment="Center"/>
+                                </Border>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Grid>
+            </Border>
+
+
+        
+            <!--......................................................
+            ..................OUTBOUND TOKEN EDIT.....................
+            ..........................................................-->
+            <Border                 
+                Height="Auto"
+                Grid.Column="1"
+                Grid.Row="1"
+                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+
+                <Grid 
+                    RowSpacing="10"
+                    ColumnDefinitions="*"
+                    RowDefinitions="*,*,*"
+                    Padding="10">
+
+
+                    <!-- TEXTBOX -->
+                    <TextBox
+                        Grid.Column="0"
+                        Grid.Row="0">
+
+                    </TextBox>
+
+                    <!-- SELECTED TOKEN FIELDS -->
+                    <ListView
+                        Grid.Column="0"
+                        Grid.Row="1"
+                        x:Name="INTokenField"                        
+                        DataContext="{x:Bind OutEditor, Mode=OneWay}"
+                        ItemsSource="{x:Bind OutEditor.SelectedToken.Fields, Mode=TwoWay}"
+                        ItemTemplateSelector="{StaticResource FieldSelector}"
+                        CanReorderItems="True"
+                        ReorderMode="Enabled"
+                        MinHeight="70"
+                        Height="Auto"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Stretch"
+                        AllowDrop="True"
+                        DragOver="Message_DragOver"                                  
+                        Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                        Drop="Message_Drop">
+
+                        <ListView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <ItemsStackPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ListView.ItemsPanel>
+                    </ListView>
+
+                    <!-- FIELD LIST -->
+                    <ListView
+                        Grid.Column="0"
+                        Grid.Row="2"
+                        x:Name="OUTField"
+                        ItemsSource="{Binding Fields, Mode=OneWay}"
+                        DragItemsStarting="Message_DragStarting"
+                        CanDragItems="True">
+
+                        <ListView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <ItemsStackPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ListView.ItemsPanel>
+
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Border Padding="10"
+                                        Width="100"
+                                        CornerRadius="6"
+                                        Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}">
+                                    <TextBlock Text="{Binding Type}" HorizontalAlignment="Center"/>
+                                </Border>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Grid>
+            </Border>
+
         </Grid>
 
-    </StackPanel>
+    </Grid>
 </Page>

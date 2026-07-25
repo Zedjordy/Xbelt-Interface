@@ -1,7 +1,6 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using SettingsClone;
-using SettingsClone.Models;
 using SettingsClone.Services;
 using SettingsClone.Views;
 using System;
@@ -16,7 +15,7 @@ public class ScannerPageViewModel : ViewModelBase
 
     private readonly INavigationService _nav;
 
-    public ObservableCollection<ScannerSettings> Scanners { get; } = new() { new ScannerSettings() };
+    public ObservableCollection<ScannerViewModel> Scanners { get; } = new() { new ScannerViewModel() };
 
     public ICommand OpenSocketCommand { get; }
     public ICommand RemoveScannerCommand { get; }
@@ -42,12 +41,12 @@ public class ScannerPageViewModel : ViewModelBase
     #region METHODS
     private void AddScanner(object parameter)
     {
-        Scanners.Add(new ScannerSettings());
+        Scanners.Add(new ScannerViewModel());
     }
 
     private void RemoveScanner(object parameter)
     {
-        if (parameter is not ScannerSettings scanner)
+        if (parameter is not ScannerViewModel scanner)
             return;
 
         Scanners.Remove(scanner);
@@ -61,7 +60,7 @@ public class ScannerPageViewModel : ViewModelBase
 
     private void OpenSocket(object parameter)
     {
-        if (parameter is not ScannerSettings scanner)
+        if (parameter is not ScannerViewModel scanner)
             return;
         
         _nav.Navigate<MessageBuilderPage>(scanner);

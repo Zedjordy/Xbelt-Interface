@@ -1,14 +1,13 @@
-﻿using SettingsClone.ViewModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Runtime.CompilerServices;
 
-namespace SettingsClone.Models;
+namespace SettingsClone.ViewModels;
 
-public class ScannerSettings : ViewModelBase
+public class ScannerViewModel : ViewModelBase
 {
 
 
@@ -39,12 +38,12 @@ public class ScannerSettings : ViewModelBase
     }
 
     private ProtocolType _Protocol = ProtocolType.UDP;
-    public ScannerSettings.ProtocolType? Protocol
+    public ScannerViewModel.ProtocolType? Protocol
     {
         get => _Protocol;
         set
         {
-            _Protocol = (ScannerSettings.ProtocolType)value;
+            _Protocol = (ScannerViewModel.ProtocolType)value;
             OnPropertyChanged();
         }
     }
@@ -110,14 +109,14 @@ public class ScannerSettings : ViewModelBase
 
     public bool IsUdp
     {
-        get => Protocol == ScannerSettings.ProtocolType.UDP;
-        set { if (value) Protocol = ScannerSettings.ProtocolType.UDP; }
+        get => Protocol == ScannerViewModel.ProtocolType.UDP;
+        set { if (value) Protocol = ScannerViewModel.ProtocolType.UDP; }
     }
 
     public bool IsTcp
     {
-        get => Protocol == ScannerSettings.ProtocolType.TCP;
-        set { if (value) Protocol = ScannerSettings.ProtocolType.TCP; }
+        get => Protocol == ScannerViewModel.ProtocolType.TCP;
+        set { if (value) Protocol = ScannerViewModel.ProtocolType.TCP; }
     }
 
     private int _TxDelay;
@@ -140,7 +139,7 @@ public class ScannerSettings : ViewModelBase
         {
             int delta = (int)value - (int)_NOREAD_perc;
 
-            if (delta > 0 && ((GOODREAD_perc - delta) <= 0))
+            if (delta > 0 && ((GOODREAD_perc - delta) < 0))
             {
                 MULTIREAD_perc = (uint)Math.Max(0, MULTIREAD_perc - delta);
             }
@@ -160,7 +159,7 @@ public class ScannerSettings : ViewModelBase
         {
             int delta = (int)value - (int)_MULTIREAD_perc;
 
-            if (delta > 0 && ((GOODREAD_perc - delta) <= 0))
+            if (delta > 0 && ((GOODREAD_perc - delta) < 0))
             {
                 NOREAD_perc = (uint)Math.Max(0, NOREAD_perc - delta);
             }
@@ -198,8 +197,8 @@ public class ScannerSettings : ViewModelBase
         }
     }
 
-    public ObservableCollection<MessageToken> InMessageTokens { get; } = new() { new MessageToken { Type = TokenType.STX, Name = "STX", Value = "\x02", Length = 1 } };
-    public ObservableCollection<MessageToken> OutMessageTokens { get; } = new() { new MessageToken { Type = TokenType.STX, Name = "STX", Value = "\x02", Length = 1 } };
+    public ObservableCollection<MessageTokenViewModel> InMessageTokens { get; } = new() { new MessageTokenViewModel { Type = TokenType.STX, Name = "STX", Value = "\x02", Length = 1 } };
+    public ObservableCollection<MessageTokenViewModel> OutMessageTokens { get; } = new() { new MessageTokenViewModel { Type = TokenType.STX, Name = "STX", Value = "\x02", Length = 1 } };
 
     
 

@@ -1,5 +1,6 @@
-﻿using SettingsClone.Models;
+﻿using Microsoft.UI.Xaml.Controls;
 using SettingsClone.Services;
+using SettingsClone.ViewModels.Field;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -7,6 +8,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Windows.Input;
 
 namespace SettingsClone.ViewModels;
 
@@ -15,15 +17,16 @@ public class MessageBuilderViewModel : INotifyPropertyChanged
     #region STRUCTURE
 
     private readonly INavigationService _nav;
-    public ObservableCollection<MessageToken> AvailableTokens { get; } = new();
-    public ObservableCollection<MessageToken> InMessageTokens => Scanner?.InMessageTokens;
-    public ObservableCollection<MessageToken> OutMessageTokens => Scanner?.OutMessageTokens;
+    public ObservableCollection<MessageTokenViewModel> AvailableTokens { get; } = new();
+    public ObservableCollection<MessageFieldViewModel> Fields { get; } = new();
+    public ObservableCollection<MessageTokenViewModel> InMessageTokens => Scanner?.InMessageTokens;
+    public ObservableCollection<MessageTokenViewModel> OutMessageTokens => Scanner?.OutMessageTokens;
 
 
 
-    private ScannerSettings? _scanner;
+    private ScannerViewModel? _scanner;
 
-    public ScannerSettings Scanner
+    public ScannerViewModel Scanner
     {
         get => _scanner;
         set
@@ -41,13 +44,14 @@ public class MessageBuilderViewModel : INotifyPropertyChanged
         _nav = nav;
 
         //Initialize(nav);
+
         Seed();
     }
     #endregion
 
 
-    private MessageToken? _selectedInToken;
-    public MessageToken? SelectedInToken
+    private MessageTokenViewModel? _selectedInToken;
+    public MessageTokenViewModel? SelectedInToken
     {
         get => _selectedInToken;
         set
@@ -57,8 +61,8 @@ public class MessageBuilderViewModel : INotifyPropertyChanged
         }
     }
 
-    private MessageToken? _selectedOutToken;
-    public MessageToken? SelectedOutToken
+    private MessageTokenViewModel? _selectedOutToken;
+    public MessageTokenViewModel? SelectedOutToken
     {
         get => _selectedOutToken;
         set
@@ -91,11 +95,17 @@ public class MessageBuilderViewModel : INotifyPropertyChanged
         AvailableTokens.Add(new() { Type = TokenType.Time, Name = "TimeStamp" });
         AvailableTokens.Add(new() { Type = TokenType.Constant, Name = "Constant" });       
         AvailableTokens.Add(new() { Type = TokenType.ETX, Name = "ETX", Value = "\x03", Length = 1});
+
+
+        Fields.Add(new TextFieldViewModel());
+        Fields.Add(new ChoiceFieldViewModel());
+        Fields.Add(new RangeFieldViewModel());
+        Fields.Add(new CounterFieldViewModel());
     }
 
-    public void InsertInToken(MessageToken token)
+    public void InsertInToken(MessageTokenViewModel token)
     {
-        Scanner.InMessageTokens.Add(new MessageToken
+        Scanner.InMessageTokens.Add(new MessageTokenViewModel
         {
             Id = Guid.NewGuid(),
             Name = token.Name,
@@ -106,9 +116,9 @@ public class MessageBuilderViewModel : INotifyPropertyChanged
         });
     }
 
-    public void InsertOutToken(MessageToken token)
+    public void InsertOutToken(MessageTokenViewModel token)
     {
-        Scanner.OutMessageTokens.Add(new MessageToken
+        Scanner.OutMessageTokens.Add(new MessageTokenViewModel
         {
             Id = Guid.NewGuid(),
             Name = token.Name,
@@ -118,9 +128,9 @@ public class MessageBuilderViewModel : INotifyPropertyChanged
         });
     }
 
-    public void InsertToken(MessageToken token, int index = -1)
+    public void InsertToken(MessageTokenViewModel token, int index = -1)
     {
-        var clone = new MessageToken
+        var clone = new MessageTokenViewModel
         {
             Type = token.Type,
             Name = token.Name,
@@ -135,7 +145,7 @@ public class MessageBuilderViewModel : INotifyPropertyChanged
         OnPropertyChanged(nameof(InPreview));
     }
 
-    public void MoveToken(MessageToken token, int newIndex)
+    public void MoveToken(MessageTokenViewModel token, int newIndex)
     {
         if (!Scanner.InMessageTokens.Contains(token))
             return;
@@ -150,7 +160,7 @@ public class MessageBuilderViewModel : INotifyPropertyChanged
         OnPropertyChanged(nameof(InPreview));
     }
 
-    public void RemoveToken(object obj, MessageToken token)
+    public void RemoveToken(object obj, MessageTokenViewModel token)
     {
         if(obj is SettingsClone.Views.MessageEditorView editor)
         {
@@ -166,19 +176,25 @@ public class MessageBuilderViewModel : INotifyPropertyChanged
         
     }
 
+    
+
+    
     public event PropertyChangedEventHandler? PropertyChanged;
 
     private void OnPropertyChanged([CallerMemberName] string? name = null)
         => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
-    public void UpdateSelectedTokenProperty(object obj, MessageToken token)
+
+
+
+    public void UpdateSelectedTokenProperty(object obj, MessageTokenViewModel token)
     {
         SelectedInToken = token;
     }
 
     public void Initialize(object parameter)
     {
-        if (parameter is ScannerSettings scanner)
+        if (parameter is ScannerViewModel scanner)
         {
             Scanner = scanner;
 
@@ -204,7 +220,7 @@ public class MessageBuilderViewModel : INotifyPropertyChanged
     {
         if (e.NewItems != null)
         {
-            foreach (MessageToken item in e.NewItems)
+            foreach (MessageTokenViewModel item in e.NewItems)
             {
                 item.PropertyChanged += Item_PropertyChanged;
             }
@@ -220,5 +236,8 @@ public class MessageBuilderViewModel : INotifyPropertyChanged
         OnPropertyChanged(nameof(InPreview));
         OnPropertyChanged(nameof(OutPreview));
     }
+
+
+
     #endregion
 }

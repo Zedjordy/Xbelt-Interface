@@ -12,9 +12,10 @@
 
         <Grid Margin="40"
               MinWidth="250"
-              RowSpacing="1">
+              RowSpacing="10">
 
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
@@ -31,6 +32,147 @@
             <!-- MASTER CARD -->
             <Border
                 Grid.Row="1"
+                CornerRadius="10"
+                Padding="24"
+                MinWidth="300"
+                MaxWidth="800"
+                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+
+                <controls:Expander
+                    IsExpanded="False"
+                    ExpandDirection="Down"
+                    Margin="0,0,0,10"
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Stretch">
+                    
+                    <!-- HEADER STYLE WINDOWS SETTINGS -->
+                    <controls:Expander.Header>
+                        
+                        <Grid Height="Auto"
+                              Padding="10"
+                              CornerRadius="5">
+                            
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock                                                
+                                Grid.Column="0"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Left"
+                                Text="Token Configuration"
+                                FontSize="20"
+                                FontWeight="SemiBold"/>
+                        </Grid>
+                        
+                    </controls:Expander.Header>
+
+                    <Grid>
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <controls:Expander
+                            Grid.Row="0"
+                            IsExpanded="False"
+                            ExpandDirection="Down"
+                            Margin="0,0,0,10"
+                            HorizontalAlignment="Stretch">
+
+                        <!-- HEADER STYLE WINDOWS SETTINGS -->
+                        <controls:Expander.Header>
+
+                            <Grid Height="Auto"
+                                  Padding="10"
+                                  CornerRadius="5">
+
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock                                                
+                                    Grid.Column="0"
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Left"
+                                    Text="Control Characters"
+                                    FontSize="20"
+                                    FontWeight="SemiBold"/>
+                            </Grid>
+                        </controls:Expander.Header>
+                    </controls:Expander>
+
+                        <controls:Expander
+                            Grid.Row="1"
+                            IsExpanded="False"
+                            ExpandDirection="Down"
+                            Margin="0,0,0,10"
+                            HorizontalAlignment="Stretch">
+
+                            <!-- HEADER STYLE WINDOWS SETTINGS -->
+                            <controls:Expander.Header>
+
+                                <Grid Height="Auto"
+                                  Padding="10"
+                                  CornerRadius="5">
+
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock                                                
+                                    Grid.Column="0"
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Left"
+                                    Text="Bardcodes"
+                                    FontSize="20"
+                                    FontWeight="SemiBold"/>
+                                </Grid>
+                            </controls:Expander.Header>
+                        </controls:Expander>
+
+                        <controls:Expander
+                            Grid.Row="2"
+                            IsExpanded="False"
+                            ExpandDirection="Down"
+                            Margin="0,0,0,10"
+                            HorizontalAlignment="Stretch">
+
+                            <!-- HEADER STYLE WINDOWS SETTINGS -->
+                            <controls:Expander.Header>
+
+                                <Grid Height="Auto"
+                                  Padding="10"
+                                  CornerRadius="5">
+
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock                                                
+                                    Grid.Column="0"
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Left"
+                                    Text="Separators"
+                                    FontSize="20"
+                                    FontWeight="SemiBold"/>
+                                </Grid>
+                            </controls:Expander.Header>
+                        </controls:Expander>                        
+                        
+                    </Grid>
+                </controls:Expander>
+            </Border>
+
+            <Border
+                Grid.Row="2"
                 CornerRadius="10"
                 Padding="24"
                 MinWidth="300"
@@ -284,6 +426,8 @@
                                                         
                                                         <TextBox Header="Subnet Mask"
                                                                  PlaceholderText="0.0.0.0"
+                                                                 ToolTipService.ToolTip="255.255.255.0"
+                                                                 ToolTipService.Placement="Bottom"                                                                 
                                                                  Text="{Binding SubnetMask, Mode=TwoWay}"/>
                                                         
                                                         <TextBox Header="Gateway"
@@ -394,7 +538,8 @@
                                                                    Maximum="9999"
                                                                    Value="{Binding TxDelay, Mode=TwoWay}"/>
 
-                                                        <Slider                                                                                 
+                                                        <Slider        
+                                                            PointerWheelChanged="Slider_PointerWheelChanged"
                                                             Minimum="0"
                                                             Maximum="100"
                                                             Background="IndianRed"
@@ -414,7 +559,8 @@
 
                                                         </Slider>
 
-                                                        <Slider                                                                                 
+                                                        <Slider             
+                                                            PointerWheelChanged="Slider_PointerWheelChanged"
                                                             Minimum="0"
                                                             Maximum="100"
                                                             Background="Goldenrod"

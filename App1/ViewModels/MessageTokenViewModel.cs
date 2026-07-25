@@ -1,11 +1,12 @@
-﻿using System;
+﻿using SettingsClone.ViewModels.Field;
+using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using static System.Runtime.InteropServices.JavaScript.JSType;
-using SettingsClone.ViewModels;
 
-namespace SettingsClone.Models;
+namespace SettingsClone.ViewModels;
 
-public class MessageToken : ViewModelBase
+public class MessageTokenViewModel : ViewModelBase
 {
     public Guid Id { get; set; }
     public TokenType Type { get; set; }
@@ -17,8 +18,15 @@ public class MessageToken : ViewModelBase
         get => _length;
         set
         {
-            _length = value;
-            OnPropertyChanged();
+            if(uint.TryParse(value.ToString(), out uint result))
+            {
+                _length = value;
+                OnPropertyChanged();
+            }
+            else
+            {
+                _length = 0;
+            }
         }
     }
 
@@ -35,8 +43,9 @@ public class MessageToken : ViewModelBase
             }
         }
     }
-    //public override string ToString() => Name;
     public TokenType ColorToken {  get; set; }
+
+    public ObservableCollection<MessageFieldViewModel> Fields = new();
 }
 
 

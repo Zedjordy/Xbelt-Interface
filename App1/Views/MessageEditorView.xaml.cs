@@ -1,7 +1,7 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
-using SettingsClone.Models;
+using SettingsClone.ViewModels;
 using System;
 using Windows.ApplicationModel.DataTransfer;
 
@@ -14,8 +14,8 @@ public sealed partial class MessageEditorView : UserControl
 
     }
 
-    public event EventHandler<MessageToken> InsertTokenRequested;
-    public event EventHandler<MessageToken> RemoveTokenRequested;
+    public event EventHandler<MessageTokenViewModel> InsertTokenRequested;
+    public event EventHandler<MessageTokenViewModel> RemoveTokenRequested;
 
     /*............................................................................*/
     public static readonly DependencyProperty HeaderProperty =
@@ -69,13 +69,13 @@ public sealed partial class MessageEditorView : UserControl
     public static readonly DependencyProperty SelectedTokenProperty =
         DependencyProperty.Register(
             nameof(SelectedToken),                  //Property name
-            typeof(MessageToken),                         //types accepted
+            typeof(MessageTokenViewModel),                         //types accepted
             typeof(MessageEditorView),              //Property owner
             new PropertyMetadata(null, OnSelectedTokenChanged));            //initial value    
 
-    public MessageToken SelectedToken
+    public MessageTokenViewModel SelectedToken
     {
-        get => (MessageToken)GetValue(SelectedTokenProperty);
+        get => (MessageTokenViewModel)GetValue(SelectedTokenProperty);
         //get => (MessageToken)MessageList.SelectedItem;
         //get => GetValue(SelectedTokenProperty);
         set => SetValue(SelectedTokenProperty, value);
@@ -102,7 +102,7 @@ public sealed partial class MessageEditorView : UserControl
 
     private void Delete_Click(object sender, RoutedEventArgs e)
     {
-        if (MessageList.SelectedItem is MessageToken token)
+        if (MessageList.SelectedItem is MessageTokenViewModel token)
         {
             RemoveTokenRequested?.Invoke(this, token);
         }
@@ -110,7 +110,7 @@ public sealed partial class MessageEditorView : UserControl
 
     private void Available_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
     {
-        if (AvailableList.SelectedItem is MessageToken token)
+        if (AvailableList.SelectedItem is MessageTokenViewModel token)
         {
             InsertTokenRequested?.Invoke(this, token);
         }
@@ -123,7 +123,7 @@ public sealed partial class MessageEditorView : UserControl
     // DRAG FROM MESSAGE (MOVE)
     private void Message_DragStarting(object sender, DragItemsStartingEventArgs e)
     {
-        if (e.Items[0] is MessageToken token)
+        if (e.Items[0] is MessageTokenViewModel token)
         {
             e.Data.SetText(token.Name);
             e.Data.RequestedOperation = DataPackageOperation.Move;
@@ -146,7 +146,7 @@ public sealed partial class MessageEditorView : UserControl
     {
         var control = (MessageEditorView)d;
 
-        var newValue = e.NewValue as MessageToken;
+        var newValue = e.NewValue as MessageTokenViewModel;
 
         // sincronizza UI interna se serve
         control.MessageList.SelectedItem = newValue;
@@ -154,7 +154,7 @@ public sealed partial class MessageEditorView : UserControl
         // opzionale: reset visual state se null
         if (newValue == null)
         {
-            control.MessageList.SelectedItem = new MessageToken();
+            control.MessageList.SelectedItem = new MessageTokenViewModel();
         }
     }
 

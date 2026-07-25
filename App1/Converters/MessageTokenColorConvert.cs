@@ -1,7 +1,7 @@
 ﻿using Microsoft.UI;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Media;
-using SettingsClone.Models;
+using SettingsClone.ViewModels;
 using System;
 using System.Net.Sockets;
 using static System.Net.Mime.MediaTypeNames;

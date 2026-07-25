@@ -122,9 +122,8 @@
                     <TextBlock 
                         Text="Length"
                         FontWeight="SemiBold"/>                    
-                    <NumberBox 
-                        Value="{x:Bind SelectedToken.Length, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"         
-                        ValueChanged="NumberBox_ValueChanged"
+                    <TextBox 
+                        Text="{x:Bind SelectedToken.Length, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"         
                         PlaceholderText="Value (if applicable)"/>
                     
                     <!-- Value-->
