@@ -1,13 +1,18 @@
-﻿using SettingsClone.ViewModels.Field;
+﻿using Microsoft.UI.Xaml;
+using SettingsClone.ViewModels.Field;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Text;
+using System.Windows.Input;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace SettingsClone.ViewModels;
 
 public class MessageTokenViewModel : ViewModelBase
 {
+
+
     public Guid Id { get; set; }
     public TokenType Type { get; set; }
     public string Name { get; set; } = string.Empty;
@@ -18,7 +23,7 @@ public class MessageTokenViewModel : ViewModelBase
         get => _length;
         set
         {
-            if(uint.TryParse(value.ToString(), out uint result))
+            if (uint.TryParse(value.ToString(), out uint result))
             {
                 _length = value;
                 OnPropertyChanged();
@@ -31,23 +36,23 @@ public class MessageTokenViewModel : ViewModelBase
     }
 
     private string _value = string.Empty;
-    public string? Value 
+    public string? Value
     {
         get => _value;
         set
         {
-            if(value is not null)
+            if (value is not null)
             {
                 _value = value;
                 OnPropertyChanged();
             }
         }
     }
-    public TokenType ColorToken {  get; set; }
+    public TokenType ColorToken { get; set; }
 
     public ObservableCollection<MessageFieldViewModel> Fields = new();
+    
 }
-
 
 public enum TokenType
 {

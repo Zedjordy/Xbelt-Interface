@@ -20,7 +20,7 @@
                     Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}">
                 <StackPanel Spacing="5"
                             Orientation="Horizontal">
-                    
+
                     <TextBlock Text="{Binding Type}" 
                                HorizontalAlignment="Left"
                                VerticalAlignment="Center"/>
@@ -38,28 +38,28 @@
             <Border Padding="10"
                     CornerRadius="6"
                     Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}">
-                
+
                 <Grid RowDefinitions="Auto, Auto"
                       RowSpacing="5">
-                    
+
                     <Grid Grid.Row="0" 
                           ColumnDefinitions="Auto,Auto,Auto"
                           ColumnSpacing="5">
-                        
+
                         <TextBlock Grid.Column="0"
                                    Text="{Binding Type}" 
                                    HorizontalAlignment="Left"
                                    VerticalAlignment="Center"/>
-                        
+
                         <TextBox x:Name="OptionField" 
                                  Grid.Column="1"
                                  MinWidth="50"
                                  Text="{Binding NewOption, Mode=TwoWay}"/>
-                        
+
                         <Button Grid.Column="2"
                                 Command="{Binding AddFieldOptionCommand}"
-                                CommandParameter="{Binding NewOption}">                        
-                            
+                                CommandParameter="{Binding NewOption}">
+
                             <SymbolIcon Symbol="Add"                                        
                                         Margin="0,0,0,0"
                                         Width="20"
@@ -97,7 +97,7 @@
 
                 <Grid ColumnDefinitions="*,*"
                       ColumnSpacing="5">
-                    
+
                     <TextBlock Grid.Column="0"
                                Text="{Binding Type}" 
                                VerticalAlignment="Center"
@@ -106,22 +106,22 @@
                     <Grid Grid.Column="1"
                           RowDefinitions="*,*"   
                           RowSpacing="5">
-                        
+
                         <ComboBox Grid.Row="0"
                                   HorizontalAlignment="Stretch"
                                   HorizontalContentAlignment="Center"
                                   ItemsSource="{Binding Formats, Mode=OneWay}"
                                   SelectedItem="{Binding Format, Mode=TwoWay}"/>
-                        
+
                         <StackPanel Grid.Row="1"
                                     Orientation="Horizontal" 
                                     Spacing="2">
-                        
+
                             <TextBox Width="70"
-                                     Text="{Binding Start, Mode=TwoWay}"/>                            
-                            
-                            <TextBlock Text="-"/>                       
-                            
+                                     Text="{Binding Start, Mode=TwoWay}"/>
+
+                            <TextBlock Text="-"/>
+
                             <TextBox Width="70"
                                      Text="{Binding End, Mode=TwoWay}"/>
                         </StackPanel>
@@ -192,12 +192,12 @@
                    FontSize="32"
                    FontWeight="SemiBold"
                    Margin="0,0,0,20"/>
-            
+
             <TextBlock Text=" > "
                    FontSize="32"
                    FontWeight="SemiBold"
                    Margin="0,0,0,20"/>
-            
+
             <TextBlock Text="Message Configuration"
                    FontSize="32"
                    FontWeight="SemiBold"
@@ -233,7 +233,7 @@
                 Preview="{Binding OutPreview}"/>
 
 
-        
+
             <!--......................................................
             ....................INBOUND TOKEN EDIT.....................
             ..........................................................-->
@@ -242,7 +242,7 @@
                 Grid.Column="0"
                 Grid.Row="1"
                 Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
-                
+
                 <Grid 
                     RowSpacing="10"
                     ColumnDefinitions="*"
@@ -253,8 +253,9 @@
                     <!-- TEXTBOX -->
                     <TextBox
                         Grid.Column="0"
-                        Grid.Row="0">
-                        
+                        Grid.Row="0"
+                        Text="{Binding InTokenPreview}">
+
                     </TextBox>
 
                     <!-- SELECTED TOKEN FIELDS -->
@@ -313,7 +314,7 @@
             </Border>
 
 
-        
+
             <!--......................................................
             ..................OUTBOUND TOKEN EDIT.....................
             ..........................................................-->
@@ -326,14 +327,15 @@
                 <Grid 
                     RowSpacing="10"
                     ColumnDefinitions="*"
-                    RowDefinitions="*,*,*"
+                    RowDefinitions="*,*,*,*"
                     Padding="10">
 
 
                     <!-- TEXTBOX -->
                     <TextBox
                         Grid.Column="0"
-                        Grid.Row="0">
+                        Grid.Row="0"
+                        Text="{Binding OutTokenPreview}">
 
                     </TextBox>
 
@@ -389,6 +391,13 @@
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
+
+                    <Button Grid.Row="3"
+                            Background="DarkOrange"
+                            Content="Try Token"
+                            Command="{Binding Generate_SelectedTokenCommand}"
+                            CommandParameter="{Binding ElementName=OutEditor}">
+                    </Button>
                 </Grid>
             </Border>
 

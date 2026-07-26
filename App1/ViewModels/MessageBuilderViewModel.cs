@@ -8,15 +8,17 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Windows.Input;
 
 namespace SettingsClone.ViewModels;
 
-public class MessageBuilderViewModel : INotifyPropertyChanged
+public class MessageBuilderViewModel : ViewModelBase, INotifyPropertyChanged
 {
     #region STRUCTURE
 
     private readonly INavigationService _nav;
+    public ICommand Generate_SelectedTokenCommand { get; }
     public ObservableCollection<MessageTokenViewModel> AvailableTokens { get; } = new();
     public ObservableCollection<MessageFieldViewModel> Fields { get; } = new();
     public ObservableCollection<MessageTokenViewModel> InMessageTokens => Scanner?.InMessageTokens;
@@ -46,6 +48,7 @@ public class MessageBuilderViewModel : INotifyPropertyChanged
         //Initialize(nav);
 
         Seed();
+        Generate_SelectedTokenCommand = new RelayCommand(Generate_SelectedToken);
     }
     #endregion
 
@@ -55,7 +58,7 @@ public class MessageBuilderViewModel : INotifyPropertyChanged
     {
         get => _selectedInToken;
         set
-        {            
+        {
             _selectedInToken = value;
             OnPropertyChanged();
         }
@@ -83,18 +86,21 @@ public class MessageBuilderViewModel : INotifyPropertyChanged
             : string.Concat(Scanner.OutMessageTokens.Select(t => $"<{t.Name} ({t.Length})>"));
 
 
+    public StringBuilder InTokenPreview { get; set; }
+    public StringBuilder OutTokenPreview { get; set; }
+
 
     #region METHODS
     private void Seed()
     {
-        AvailableTokens.Add(new() { Type = TokenType.STX, Name = "STX", Value="\x02", Length = 1});
+        AvailableTokens.Add(new() { Type = TokenType.STX, Name = "STX", Value = "\x02", Length = 1 });
         AvailableTokens.Add(new() { Type = TokenType.Separator, Name = "Separator" });
         AvailableTokens.Add(new() { Type = TokenType.Index, Name = "Index" });
         AvailableTokens.Add(new() { Type = TokenType.Barcode, Name = "Barcode" });
         AvailableTokens.Add(new() { Type = TokenType.Date, Name = "Date" });
         AvailableTokens.Add(new() { Type = TokenType.Time, Name = "TimeStamp" });
-        AvailableTokens.Add(new() { Type = TokenType.Constant, Name = "Constant" });       
-        AvailableTokens.Add(new() { Type = TokenType.ETX, Name = "ETX", Value = "\x03", Length = 1});
+        AvailableTokens.Add(new() { Type = TokenType.Constant, Name = "Constant" });
+        AvailableTokens.Add(new() { Type = TokenType.ETX, Name = "ETX", Value = "\x03", Length = 1 });
 
 
         Fields.Add(new TextFieldViewModel());
@@ -112,7 +118,7 @@ public class MessageBuilderViewModel : INotifyPropertyChanged
             Value = token.Value,
             Length = token.Length,
             Type = token.Type
-            
+
         });
     }
 
@@ -162,9 +168,9 @@ public class MessageBuilderViewModel : INotifyPropertyChanged
 
     public void RemoveToken(object obj, MessageTokenViewModel token)
     {
-        if(obj is SettingsClone.Views.MessageEditorView editor)
+        if (obj is SettingsClone.Views.MessageEditorView editor)
         {
-            if(editor.Name == "InEditor")
+            if (editor.Name == "InEditor")
             {
                 Scanner.InMessageTokens.Remove(token);
             }
@@ -173,12 +179,12 @@ public class MessageBuilderViewModel : INotifyPropertyChanged
                 Scanner.OutMessageTokens.Remove(token);
             }
         }
-        
+
     }
 
-    
 
-    
+
+
     public event PropertyChangedEventHandler? PropertyChanged;
 
     private void OnPropertyChanged([CallerMemberName] string? name = null)
@@ -199,7 +205,7 @@ public class MessageBuilderViewModel : INotifyPropertyChanged
             Scanner = scanner;
 
             //Aggiorna Preview dopo riordinamento
-            scanner.InMessageTokens.CollectionChanged += Devices_CollectionChanged;            
+            scanner.InMessageTokens.CollectionChanged += Devices_CollectionChanged;
             scanner.InMessageTokens.CollectionChanged += (_, __) => OnPropertyChanged(nameof(InPreview));
 
             scanner.OutMessageTokens.CollectionChanged += Devices_CollectionChanged;
@@ -231,13 +237,88 @@ public class MessageBuilderViewModel : INotifyPropertyChanged
     object? sender,
     PropertyChangedEventArgs e)
     {
-        
+
         // un elemento è cambiato
         OnPropertyChanged(nameof(InPreview));
         OnPropertyChanged(nameof(OutPreview));
     }
 
+    private void Generate_SelectedToken(object sender)
+    {
 
+        //var type = await e.DataView.GetTextAsync();
+        //var obj = (Microsoft.UI.Xaml.Controls.ListView)sender;
+        StringBuilder token_string = new();
+        Random random = new();
+        MessageTokenViewModel selectedtoken;
+
+
+        if ((sender is not SettingsClone.Views.MessageEditorView editor) ||
+            (editor.DataContext is not SettingsClone.ViewModels.MessageBuilderViewModel list))
+            return;
+
+
+
+        if (editor.Name == "InEditor")
+        {
+            selectedtoken = list?.SelectedInToken;
+            list.InTokenPreview = token_string;
+        }
+        else if (editor.Name == "OutEditor")
+        {
+            selectedtoken = list?.SelectedOutToken;
+            list.OutTokenPreview = token_string;
+        }
+        else
+        {
+            return;
+        }
+
+        if (selectedtoken is null)
+        {
+            return;
+        }
+
+        foreach (MessageFieldViewModel field in selectedtoken.Fields)
+        {
+
+
+            switch (field)
+            {
+                case TextFieldViewModel textToken:
+                    token_string.Append(textToken.Value);
+                    break;
+
+
+
+                case ChoiceFieldViewModel choiceToken:
+
+                    var randomOption = choiceToken.Options[random.Next(choiceToken.Options.Count)];
+                    token_string.Append(randomOption);
+                    break;
+
+
+
+                case RangeFieldViewModel rangeToken:
+                    break;
+
+
+
+                case CounterFieldViewModel counterToken:
+
+                    if (counterToken.Current > int.Parse(counterToken.End))
+                    {
+                        counterToken.Current = int.Parse(counterToken.Start);
+                    }
+
+                    token_string.Append(counterToken.Current);
+                    break;
+                _:
+                    break;
+
+            }
+        }
+    }
 
     #endregion
 }

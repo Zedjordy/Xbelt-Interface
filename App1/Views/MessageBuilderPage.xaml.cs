@@ -7,6 +7,9 @@ using SettingsClone.Services;
 using SettingsClone.ViewModels;
 using SettingsClone.ViewModels.Field;
 using System;
+using System.Linq;
+using System.Text;
+using Windows.ApplicationModel.Contacts;
 using Windows.ApplicationModel.DataTransfer;
 
 namespace SettingsClone.Views;
@@ -72,26 +75,26 @@ public sealed partial class MessageBuilderPage : Page
     {
         var type = await e.DataView.GetTextAsync();
         var obj = (Microsoft.UI.Xaml.Controls.ListView)sender;
-        
+
         MessageTokenViewModel selectedtoken;
 
 
         if (obj.DataContext is not SettingsClone.Views.MessageEditorView editor)
             return;
 
-        if(editor.DataContext is not SettingsClone.ViewModels.MessageBuilderViewModel list)
+        if (editor.DataContext is not SettingsClone.ViewModels.MessageBuilderViewModel list)
             return;
 
-        
+
 
         if (editor.Name == "InEditor")
         {
             selectedtoken = list?.SelectedInToken;
         }
-        else if(editor.Name == "OutEditor")
+        else if (editor.Name == "OutEditor")
         {
             selectedtoken = list?.SelectedOutToken;
-        }             
+        }
         else
         {
             return;
@@ -121,6 +124,9 @@ public sealed partial class MessageBuilderPage : Page
                 break;
         }
     }
+
+    
+
 
     protected override void OnNavigatedTo(NavigationEventArgs e)
     {
