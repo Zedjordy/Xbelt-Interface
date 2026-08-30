@@ -44,10 +44,12 @@ public partial class App : Application
 
         //Pages
         services.AddTransient<ScannerPage>();
+        services.AddTransient<NetworkPage>();
         services.AddTransient<MessageBuilderPage>();
 
         //ViewModel
         services.AddSingleton<ScannerPageViewModel>();
+        services.AddSingleton<NetworkPageViewModel>();
         services.AddTransient<MessageBuilderViewModel>();
 
         //services.AddTransient<MessageBuilderPage>();

@@ -45,6 +45,15 @@
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
+                <!-- Network and Communication -->
+                <NavigationViewItem Tag="Network"
+                                Content="Network">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE148;"/>
+                        <!-- Settings/gear-like system icon -->
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+
             </NavigationView.MenuItems>
 
 

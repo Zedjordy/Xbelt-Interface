@@ -2,6 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using SettingsClone.Services;
+using SettingsClone.ViewModels;
 using SettingsClone.Views;
 using System.Linq;
 
@@ -42,6 +43,10 @@ public sealed partial class MainWindow : Window
             {
                 case "Scanner":
                     _navigation.Navigate<ScannerPage>();
+                    break;
+                
+                case "Network":
+                    _navigation.Navigate<NetworkPage>(App.Services.GetRequiredService<ScannerPageViewModel>());
                     break;
             }
         }

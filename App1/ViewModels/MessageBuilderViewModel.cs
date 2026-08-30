@@ -26,7 +26,7 @@ public class MessageBuilderViewModel : ViewModelBase, INotifyPropertyChanged
     public ObservableCollection<MessageTokenViewModel> InMessageTokens => Scanner?.InMessageTokens;
     public ObservableCollection<MessageTokenViewModel> OutMessageTokens => Scanner?.OutMessageTokens;
 
-
+    Random random = new();
 
     private ScannerViewModel? _scanner;
 
@@ -265,13 +265,20 @@ public class MessageBuilderViewModel : ViewModelBase, INotifyPropertyChanged
         OnPropertyChanged(nameof(OutPreview));
     }
 
+
+    /*....................................................................
+    @
+    @
+    @       Generatea sample of the selected token
+    @       by using the fields it is composed by
+    @
+    @....................................................................*/
     private void Generate_SelectedToken(object sender)
     {
 
         //var type = await e.DataView.GetTextAsync();
         //var obj = (Microsoft.UI.Xaml.Controls.ListView)sender;
         StringBuilder token_string = new();
-        Random random = new();
         MessageTokenViewModel selectedtoken;
 
 
@@ -306,30 +313,44 @@ public class MessageBuilderViewModel : ViewModelBase, INotifyPropertyChanged
 
             switch (field)
             {
+                /*....................................................................
+                @   
+                @   case of Textfield type
+                @....................................................................*/
                 case TextFieldViewModel textToken:
                     token_string.Append(textToken.Value);
                     break;
 
 
-
+                /*....................................................................
+                @   
+                @   case of Choice field type
+                @....................................................................*/
                 case ChoiceFieldViewModel choiceToken:
                     try
                     {
                         var randomOption = choiceToken.Options?[random.Next(choiceToken.Options.Count)];
                         token_string.Append(randomOption);
                     }
-                    catch(ArgumentOutOfRangeException e)
+                    catch (ArgumentOutOfRangeException e)
                     {
                         Debug.WriteLine("ArgumentOutOfRangeException");
                     }
                     break;
 
 
-
+                /*....................................................................
+                @   
+                @   case of Range field type
+                @....................................................................*/
                 case RangeFieldViewModel rangeToken:
 
                     switch (rangeToken.Format)
                     {
+                        /*....................................................................
+                        @   
+                        @   case of Range.Numeric field subtype
+                        @....................................................................*/
                         case RangeType.Numeric:
                             try
                             {
@@ -349,7 +370,10 @@ public class MessageBuilderViewModel : ViewModelBase, INotifyPropertyChanged
                                 Debug.WriteLine("NullReferenceException");
                             }
                             break;
-
+                        /*....................................................................
+                        @   
+                        @   case of Range.Alphanumeric field subtype
+                        @....................................................................*/
                         case RangeType.AlphaNumeric:
                             {
                                 StringBuilder randomOption = new();
@@ -357,80 +381,22 @@ public class MessageBuilderViewModel : ViewModelBase, INotifyPropertyChanged
 
                                 length = Math.Max(rangeToken.Start.Length, rangeToken.End.Length);
 
-                                //0 = 48
-                                //9 = 57
-                                //a number would be between 96-114
-                                //a letter would be between 130-244
-                                //A = 65
-                                //Z = 90
-                                //a = 97
-                                //z = 122
                                 for (int i = 0; i < length; i++)
                                 {
                                     char start = rangeToken.Start[i];
                                     char end = rangeToken.End[i];
 
-                                    int temp;
-                                    if (start > end)
-                                    {
-                                        temp = start;
-                                        start = end;
-                                        end = (char)temp;
-                                    }
-                                    if (char.IsDigit(start) && char.IsDigit(end))
-                                    {
-                                        randomOption.Append(
-                                            (char)random.Next(start, end + 1));
-
-                                    }
-                                    else if (((start + end) >= 130) && ((start + end) <= 244))
-                                    {
-                                        // between 65 - 90
-                                        if ((start >= 'A' && start <= 'Z') && (end >= 'A' && end <= 'Z'))
-                                        {
-                                            randomOption.Append(
-                                                (char)random.Next(start, end + 1));
-                                        }
-                                        // between 97 - 122
-                                        else if ((start >= 'a' && start <= 'z') && (end >= 'a' && end <= 'z'))
-                                        {
-                                            randomOption.Append(
-                                                (char)random.Next(start, end + 1));
-                                        }
-                                        else if ((start >= 'A' && start <= 'Z') &&
-                                                (end >= 'a' && end <= 'z'))
-                                        {
-                                            List<char> options = new();
-
-                                            options.Add((char)random.Next('a', end + 1));
-                                            options.Add((char)random.Next(start, 'Z' + 1));
-
-                                            randomOption.Append(
-                                                options[random.Next(options.Count)]);
-                                        }
-                                        else if ((start >= 'a' && start <= 'z') &&
-                                                (end >= 'A' && end <= 'Z'))
-                                        {
-                                            List<char> options = new();
-
-                                            options.Add((char)random.Next(start, 'z' + 1));
-                                            options.Add((char)random.Next('A', end + 1));
-
-                                            randomOption.Append(
-                                                options[random.Next(options.Count)]);
-                                        }
-                                        else
-                                        {
-                                            randomOption.Append('.');
-                                        }
-                                    }
+                                    randomOption.Append(GenerateRandomChar(start, end));
                                 }
 
                                 token_string.Append(randomOption);
 
                             }
                             break;
-
+                        /*....................................................................
+                        @   
+                        @   case of Range.Alphabetic field subtype
+                        @....................................................................*/
                         case RangeType.Alphabetic:
                             try
                             {
@@ -508,7 +474,10 @@ public class MessageBuilderViewModel : ViewModelBase, INotifyPropertyChanged
                     break;
 
 
-
+                /*....................................................................
+                @   
+                @   case of Counter field type
+                @....................................................................*/
                 case CounterFieldViewModel counterToken:
                     try
                     {
@@ -551,6 +520,113 @@ public class MessageBuilderViewModel : ViewModelBase, INotifyPropertyChanged
             }
         }
     }
+    /*********************************************************************
+    @
+    @
+    @       Given an interval return a random value
+    @       0 = 48
+    @       9 = 57
+    @       
+    @       
+    @       A = 65
+    @       Z = 90
+    @       a = 97
+    @       z = 122
+    @
+    @*********************************************************************/
+    private char GenerateRandomChar(char start, char end)
+    {
 
+        if (IsDigit(start) && IsDigit(end))
+        {
+            return (char)random.Next(start, end + 1);
+        }
+        /*....................................................................
+        @   
+        @   case of 'A' and 'Z'
+        @....................................................................*/
+        if (IsUpper(start) && IsUpper(end))
+        {
+            if (start > end)
+            {
+                (start, end) = (end, start);
+            }
+            return (char)random.Next(start, end + 1);
+        }
+        /*....................................................................
+        @   
+        @   case of 'a' and 'z'
+        @....................................................................*/
+        if (IsLower(start) && IsLower(end))
+        {
+            if (start > end)
+            {
+                (start, end) = (end, start);
+            }
+            return (char)random.Next(start, end + 1);
+        }
+        /*....................................................................
+        @   
+        @   case of 'a' and 'Z'
+        @....................................................................*/
+        if (IsLower(start) && IsUpper(end))
+        {
+            List<char> options = new();
+
+            options.Add((char)random.Next(start, 'z' + 1));
+            options.Add((char)random.Next('A', end + 1));
+
+            return (char)options[random.Next(options.Count)];
+        }
+        /*....................................................................
+        @   
+        @   case of 'A' and 'z'
+        @....................................................................*/
+        if (IsUpper(start) && IsLower(end))
+        {
+
+            List<char> options = new();
+
+            options.Add((char)random.Next(start, 'Z' + 1));
+            options.Add((char)random.Next('a', end + 1));
+
+            return (char)options[random.Next(options.Count)];
+
+        }
+        return '.';
+    }
+    /*....................................................................
+    @
+    @
+    @       Check if the char is UPPER case
+    @
+    @
+    @....................................................................*/
+    private static bool IsUpper(char c)
+    {
+        return c >= 'A' && c <= 'Z';
+    }
+    /*....................................................................
+    @
+    @
+    @       Check if the char is lower case
+    @
+    @
+    @....................................................................*/
+    private static bool IsLower(char c)
+    {
+        return c >= 'a' && c <= 'z';
+    }
+    /*....................................................................
+    @
+    @
+    @       Check if the char is a number digit
+    @
+    @
+    @....................................................................*/
+    private static bool IsDigit(char c)
+    {
+        return c >= '0' && c <= '9';
+    }
     #endregion
 }

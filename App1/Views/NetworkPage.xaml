@@ -1,0 +1,112 @@
+<Page
+    x:Class="SettingsClone.Views.NetworkPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:Microsoft.UI.Xaml.Controls"
+    xmlns:local="using:SettingsClone.Views.Controls"
+    x:Name="RootPage">
+
+    <ScrollViewer>
+
+
+
+        <Grid Margin="40"
+              MinWidth="250"
+              RowSpacing="10">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock
+                Grid.Row="0"
+                Text="Network Monitoring"
+                FontSize="32"
+                FontWeight="SemiBold"
+                Margin="0,0,0,20"/>
+
+
+
+            <!-- MASTER CARD -->
+            <Border
+                Grid.Row="1"
+                CornerRadius="10"
+                Padding="24"
+                MinWidth="300"
+                Width="Auto"
+                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+
+                <Grid Margin="40">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <!--......................................................
+                    ..................SCANNER IP LIST.........................
+                    ..........................................................-->
+                    <ItemsControl Grid.Column="1"
+								  Grid.Row="0"
+								  ItemsSource="{Binding Scanners}">
+                        <ItemsControl.ItemTemplate>
+
+                            <DataTemplate>
+
+                                <Grid Height="Auto"
+                                      Padding="10"                                      
+                                      Margin="0,0,0,10"
+                                      Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                      CornerRadius="5">
+
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock
+                                                Grid.Column="0"
+                                                VerticalAlignment="Center"
+                                                HorizontalAlignment="Left"
+                                                FontSize="15">
+
+                                                <Run Text="{Binding Name}" />
+                                                <Run Text=" - " />
+                                                <Run Text="{Binding IpAddress}"/>
+                                                <Run Text=" - " />
+                                                <Run Text="C:" />
+                                                <Run Text="{Binding ClientPort}" />
+                                                <Run Text=" - " />
+                                                <Run Text="S:" />
+                                                <Run Text="{Binding ServerPort}" />
+
+                                    </TextBlock>
+
+                                    <!-- ENABLE -->
+                                    <ToggleSwitch
+                                                Grid.Column="1"
+                                                VerticalAlignment="Center"
+                                                HorizontalContentAlignment="Stretch"
+                                                HorizontalAlignment="Right"
+                                                MinWidth="100"
+                                                OnContent="Connect"
+                                                OffContent="Disconnect"
+                                                IsOn="{Binding IsEnabled, Mode=TwoWay}"/>
+
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Grid>
+
+
+            </Border>
+        </Grid>
+    </ScrollViewer>
+</Page>

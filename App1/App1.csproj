@@ -16,6 +16,7 @@
   <ItemGroup>
     <None Remove="Views\Controls\MessageFieldControl.xaml" />
     <None Remove="Views\MessageEditorView.xaml" />
+    <None Remove="Views\NetworkPage.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Page Remove="Views\PageButton.xaml" />
@@ -80,6 +81,11 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\NetworkPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
 
   <!--
