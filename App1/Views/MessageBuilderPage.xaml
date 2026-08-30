@@ -254,7 +254,8 @@
                     <TextBox
                         Grid.Column="0"
                         Grid.Row="0"
-                        Text="{Binding InTokenPreview}">
+                        IsReadOnly="True"
+                        Text="{Binding InTokenPreview, Mode=OneWay}">
 
                     </TextBox>
 
@@ -335,7 +336,8 @@
                     <TextBox
                         Grid.Column="0"
                         Grid.Row="0"
-                        Text="{Binding OutTokenPreview}">
+                        IsReadOnly="True"
+                        Text="{Binding OutTokenPreview, Mode=OneWay}">
 
                     </TextBox>
 
@@ -365,7 +367,7 @@
                         </ListView.ItemsPanel>
                     </ListView>
 
-                    <!-- FIELD LIST -->
+                    <!-- FIELD OPTIONS LIST -->
                     <ListView
                         Grid.Column="0"
                         Grid.Row="2"

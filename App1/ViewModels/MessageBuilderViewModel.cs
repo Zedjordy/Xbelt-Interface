@@ -6,10 +6,12 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows.Input;
+using static SettingsClone.ViewModels.Field.RangeFieldViewModel;
 
 namespace SettingsClone.ViewModels;
 
@@ -86,8 +88,28 @@ public class MessageBuilderViewModel : ViewModelBase, INotifyPropertyChanged
             : string.Concat(Scanner.OutMessageTokens.Select(t => $"<{t.Name} ({t.Length})>"));
 
 
-    public StringBuilder InTokenPreview { get; set; }
-    public StringBuilder OutTokenPreview { get; set; }
+
+    private string _InTokenPreview;
+    public string InTokenPreview
+    {
+        get => _InTokenPreview;
+        set
+        {
+            _InTokenPreview = value;
+            OnPropertyChanged();
+        }
+    }
+
+    private string _OutTokenPreview;
+    public string OutTokenPreview
+    {
+        get => _OutTokenPreview;
+        set
+        {
+            _OutTokenPreview = value;
+            OnPropertyChanged();
+        }
+    }
 
 
     #region METHODS
@@ -262,12 +284,12 @@ public class MessageBuilderViewModel : ViewModelBase, INotifyPropertyChanged
         if (editor.Name == "InEditor")
         {
             selectedtoken = list?.SelectedInToken;
-            list.InTokenPreview = token_string;
+            list.InTokenPreview = token_string.ToString();
         }
         else if (editor.Name == "OutEditor")
         {
             selectedtoken = list?.SelectedOutToken;
-            list.OutTokenPreview = token_string;
+            list.OutTokenPreview = token_string.ToString();
         }
         else
         {
@@ -282,7 +304,6 @@ public class MessageBuilderViewModel : ViewModelBase, INotifyPropertyChanged
         foreach (MessageFieldViewModel field in selectedtoken.Fields)
         {
 
-
             switch (field)
             {
                 case TextFieldViewModel textToken:
@@ -292,30 +313,232 @@ public class MessageBuilderViewModel : ViewModelBase, INotifyPropertyChanged
 
 
                 case ChoiceFieldViewModel choiceToken:
-
-                    var randomOption = choiceToken.Options[random.Next(choiceToken.Options.Count)];
-                    token_string.Append(randomOption);
+                    {
+                        var randomOption = choiceToken.Options[random.Next(choiceToken.Options.Count)];
+                        token_string.Append(randomOption);
+                    }
                     break;
 
 
 
                 case RangeFieldViewModel rangeToken:
+
+                    switch (rangeToken.Format)
+                    {
+                        case RangeType.Numeric:
+                            try
+                            {
+                                int length;
+
+                                length = Math.Max(rangeToken.Start.Length, rangeToken.End.Length);
+
+                                var randomOption = random.Next(int.Parse(rangeToken.Start), int.Parse(rangeToken.End) + 1);
+                                token_string.Append(randomOption.ToString($"D{length}"));
+                            }
+                            catch (FormatException e)
+                            {
+                                Debug.WriteLine("test");
+                            }
+                            break;
+
+                        case RangeType.AlphaNumeric:
+                            {
+                                StringBuilder randomOption = new();
+                                int length;
+
+                                length = Math.Max(rangeToken.Start.Length, rangeToken.End.Length);
+
+                                //0 = 48
+                                //9 = 57
+                                //a number would be between 96-114
+                                //a letter would be between 130-244
+                                //A = 65
+                                //Z = 90
+                                //a = 97
+                                //z = 122
+                                for (int i = 0; i < length; i++)
+                                {
+                                    char start = rangeToken.Start[i];
+                                    char end = rangeToken.End[i];
+
+                                    int temp;
+                                    if (start > end)
+                                    {
+                                        temp = start;
+                                        start = end;
+                                        end = (char)temp;
+                                    }
+                                    if (char.IsDigit(start) && char.IsDigit(end))
+                                    {
+                                        randomOption.Append(
+                                            (char)random.Next(start, end + 1));
+
+                                    }
+                                    else if (((start + end) >= 130) && ((start + end) <= 244))
+                                    {
+                                        // between 65 - 90
+                                        if ((start >= 'A' && start <= 'Z') && (end >= 'A' && end <= 'Z'))
+                                        {
+                                            randomOption.Append(
+                                                (char)random.Next(start, end + 1));
+                                        }
+                                        // between 97 - 122
+                                        else if ((start >= 'a' && start <= 'z') && (end >= 'a' && end <= 'z'))
+                                        {
+                                            randomOption.Append(
+                                                (char)random.Next(start, end + 1));
+                                        }
+                                        else if ((start >= 'A' && start <= 'Z') &&
+                                                (end >= 'a' && end <= 'z'))
+                                        {
+                                            List<char> options = new();
+
+                                            options.Add((char)random.Next('a', end + 1));
+                                            options.Add((char)random.Next(start, 'Z' + 1));
+
+                                            randomOption.Append(
+                                                options[random.Next(options.Count)]);
+                                        }
+                                        else if ((start >= 'a' && start <= 'z') &&
+                                                (end >= 'A' && end <= 'Z'))
+                                        {
+                                            List<char> options = new();
+
+                                            options.Add((char)random.Next(start, 'z' + 1));
+                                            options.Add((char)random.Next('A', end + 1));
+
+                                            randomOption.Append(
+                                                options[random.Next(options.Count)]);
+                                        }
+                                        else
+                                        {
+                                            randomOption.Append('.');
+                                        }
+                                    }
+                                }
+
+                                token_string.Append(randomOption);
+
+                            }
+                            break;
+
+                        case RangeType.Alphabetic:
+                            try
+                            {
+                                StringBuilder randomOption = new();
+                                int length;
+
+                                length = Math.Max(rangeToken.Start.Length, rangeToken.End.Length);
+
+                                //A = 65
+                                //Z = 90
+                                //a = 97
+                                //z = 122
+                                for (int i = 0; i < length; i++)
+                                {
+                                    char start = rangeToken.Start[i];
+                                    char end = rangeToken.End[i];
+
+                                    int temp;
+                                    if (start > end)
+                                    {
+                                        temp = start;
+                                        start = end;
+                                        end = (char)temp;
+                                    }
+
+                                    // between 65 - 90
+                                    if ((start >= 'A' && start <= 'Z') && (end >= 'A' && end <= 'Z'))
+                                    {
+                                        randomOption.Append(
+                                            (char)random.Next(start, end + 1));
+                                    }
+                                    // between 97 - 122
+                                    else if ((start >= 'a' && start <= 'z') && (end >= 'a' && end <= 'z'))
+                                    {
+                                        randomOption.Append(
+                                            (char)random.Next(start, end + 1));
+                                    }
+                                    else if ((start >= 'A' && start <= 'Z') &&
+                                            (end >= 'a' && end <= 'z'))
+                                    {
+                                        List<char> options = new();
+
+                                        options.Add((char)random.Next('a', end + 1));
+                                        options.Add((char)random.Next(start, 'Z' + 1));
+
+                                        randomOption.Append(
+                                            options[random.Next(options.Count)]);
+                                    }
+                                    else if ((start >= 'a' && start <= 'z') &&
+                                            (end >= 'A' && end <= 'Z'))
+                                    {
+                                        List<char> options = new();
+
+                                        options.Add((char)random.Next(start, 'z' + 1));
+                                        options.Add((char)random.Next('A', end + 1));
+
+                                        randomOption.Append(
+                                            options[random.Next(options.Count)]);
+                                    }
+                                    else
+                                    {
+                                        randomOption.Append('.');
+                                    }
+                                }
+
+                                token_string.Append(randomOption);
+                            }
+                            catch (FormatException e)
+                            {
+                                Debug.WriteLine("test");
+                            }
+                            break;
+                    }
+
                     break;
 
 
 
                 case CounterFieldViewModel counterToken:
-
-                    if (counterToken.Current > int.Parse(counterToken.End))
+                    try
                     {
-                        counterToken.Current = int.Parse(counterToken.Start);
+                        int length;
+
+                        length = Math.Max(counterToken.Start.Length, counterToken.End.Length);
+
+
+                        if (counterToken.Current > int.Parse(counterToken.End))
+                        {
+                            counterToken.Current = int.Parse(counterToken.Start);
+                        }
+
+                        token_string.Append((counterToken.Current++).ToString($"D{length}"));
+                    }
+                    catch (FormatException e)
+                    {
+                        Debug.WriteLine("test");
                     }
 
-                    token_string.Append(counterToken.Current);
+
+
                     break;
                 _:
                     break;
 
+            }
+
+            if (editor.Name == "InEditor")
+            {
+                list.InTokenPreview = token_string.ToString();
+            }
+            else if (editor.Name == "OutEditor")
+            {
+                list.OutTokenPreview = token_string.ToString();
+            }
+            else
+            {
+                return;
             }
         }
     }
