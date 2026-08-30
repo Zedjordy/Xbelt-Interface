@@ -69,8 +69,10 @@
                         </Button>
                     </Grid>
 
-                    <ListView Grid.Row="1"
-                              ItemsSource="{Binding Options, Mode=OneWay}">
+                    <ListView x:Name="ChoiceList"
+                              Grid.Row="1"
+                              ItemsSource="{Binding Options, Mode=OneWay}"
+                              DoubleTapped="Choice_DoubleTapped">
 
                         <ListView.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -117,12 +119,13 @@
                                     Orientation="Horizontal" 
                                     Spacing="2">
 
-                            <TextBox Width="70"
+                            <TextBox MinWidth="70"
                                      Text="{Binding Start, Mode=TwoWay}"/>
 
-                            <TextBlock Text="-"/>
+                            <TextBlock Text="-"
+                                       VerticalAlignment="Center"/>
 
-                            <TextBox Width="70"
+                            <TextBox MinWidth="70"
                                      Text="{Binding End, Mode=TwoWay}"/>
                         </StackPanel>
                     </Grid>
@@ -149,12 +152,13 @@
                                 Orientation="Horizontal" 
                                 Spacing="2">
 
-                        <TextBox Width="70"
+                        <TextBox MinWidth="70"
                                  Text="{Binding Start, Mode=TwoWay}"/>
 
-                        <TextBlock Text="-"/>
+                        <TextBlock Text="-"
+                                   VerticalAlignment="Center"/>
 
-                        <TextBox Width="70"
+                        <TextBox MinWidth="70"
                                  Text="{Binding End, Mode=TwoWay}"/>
                     </StackPanel>
                 </StackPanel>
@@ -246,7 +250,7 @@
                 <Grid 
                     RowSpacing="10"
                     ColumnDefinitions="*"
-                    RowDefinitions="*,*,*"
+                    RowDefinitions="Auto,*,Auto,*"
                     Padding="10">
 
 
@@ -263,10 +267,11 @@
                     <ListView
                         Grid.Column="0"
                         Grid.Row="1"
-                        x:Name="OUTTokenField"                        
+                        x:Name="INTokenField"                        
                         DataContext="{x:Bind InEditor, Mode=OneWay}"
                         ItemsSource="{x:Bind InEditor.SelectedToken.Fields, Mode=TwoWay}"
                         ItemTemplateSelector="{StaticResource FieldSelector}"
+                        DoubleTapped="Token_DoubleTapped"
                         CanReorderItems="True"
                         ReorderMode="Enabled"
                         MinHeight="70"
@@ -311,6 +316,13 @@
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
+
+                    <Button Grid.Row="3"
+                            Background="DarkOrange"
+                            Content="Try Token"
+                            Command="{Binding Generate_SelectedTokenCommand}"
+                            CommandParameter="{Binding ElementName=InEditor}">
+                    </Button>
                 </Grid>
             </Border>
 
@@ -328,7 +340,7 @@
                 <Grid 
                     RowSpacing="10"
                     ColumnDefinitions="*"
-                    RowDefinitions="*,*,*,*"
+                    RowDefinitions="Auto,*,Auto,*"
                     Padding="10">
 
 
@@ -345,10 +357,11 @@
                     <ListView
                         Grid.Column="0"
                         Grid.Row="1"
-                        x:Name="INTokenField"                        
+                        x:Name="OUTTokenField"                        
                         DataContext="{x:Bind OutEditor, Mode=OneWay}"
                         ItemsSource="{x:Bind OutEditor.SelectedToken.Fields, Mode=TwoWay}"
                         ItemTemplateSelector="{StaticResource FieldSelector}"
+                        DoubleTapped="Token_DoubleTapped"
                         CanReorderItems="True"
                         ReorderMode="Enabled"
                         MinHeight="70"

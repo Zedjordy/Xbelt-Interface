@@ -313,9 +313,14 @@ public class MessageBuilderViewModel : ViewModelBase, INotifyPropertyChanged
 
 
                 case ChoiceFieldViewModel choiceToken:
+                    try
                     {
-                        var randomOption = choiceToken.Options[random.Next(choiceToken.Options.Count)];
+                        var randomOption = choiceToken.Options?[random.Next(choiceToken.Options.Count)];
                         token_string.Append(randomOption);
+                    }
+                    catch(ArgumentOutOfRangeException e)
+                    {
+                        Debug.WriteLine("ArgumentOutOfRangeException");
                     }
                     break;
 
@@ -337,7 +342,11 @@ public class MessageBuilderViewModel : ViewModelBase, INotifyPropertyChanged
                             }
                             catch (FormatException e)
                             {
-                                Debug.WriteLine("test");
+                                Debug.WriteLine("FormatException");
+                            }
+                            catch (NullReferenceException e)
+                            {
+                                Debug.WriteLine("NullReferenceException");
                             }
                             break;
 

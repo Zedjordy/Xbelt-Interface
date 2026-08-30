@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
 using Microsoft.VisualBasic;
 using SettingsClone.Services;
@@ -17,14 +18,22 @@ namespace SettingsClone.Views;
 public sealed partial class MessageBuilderPage : Page
 {
     public MessageBuilderViewModel ViewModel { get; }
-
+    public event EventHandler<MessageTokenViewModel> RemoveChoiceField;
     public MessageBuilderPage()
     {
         InitializeComponent();
 
         ViewModel = App.Services.GetRequiredService<MessageBuilderViewModel>();
         DataContext = ViewModel;
-
+        /****************************************************************************
+        @
+        @
+        @
+        @                             INSERT TOKEN
+        @
+        @
+        @
+        @*****************************************************************************/
         InEditor.InsertTokenRequested += (s, token) =>
         {
             ViewModel.InsertInToken(token);
@@ -34,11 +43,24 @@ public sealed partial class MessageBuilderPage : Page
         {
             ViewModel.InsertOutToken(token);
         };
-
+        /****************************************************************************
+        @
+        @
+        @
+        @                             REMOVE TOKEN
+        @
+        @
+        @
+        @*****************************************************************************/
         InEditor.RemoveTokenRequested += (s, token) =>
         {
             ViewModel.RemoveToken(s, token);
         };
+
+        //OUTTokenField.RemoveChoiceField += (s, token) =>
+        //{
+        //    ViewModel.RemoveToken(s, token);
+        //};
 
         OutEditor.RemoveTokenRequested += (s, token) =>
         {
@@ -73,7 +95,10 @@ public sealed partial class MessageBuilderPage : Page
     //DROP WITH REAL REORDER
     private async void Message_Drop(object sender, DragEventArgs e)
     {
-        var type = await e.DataView.GetTextAsync();
+        if (e.Data.RequestedOperation == 0)
+            return;
+
+        var type = await e.DataView?.GetTextAsync();
         var obj = (Microsoft.UI.Xaml.Controls.ListView)sender;
 
         MessageTokenViewModel selectedtoken;
@@ -125,7 +150,75 @@ public sealed partial class MessageBuilderPage : Page
         }
     }
 
-    
+
+
+    private void Choice_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+    {
+       if(sender is Microsoft.UI.Xaml.Controls.ListView list)
+        {
+            if (list.DataContext is not ChoiceFieldViewModel field)
+                return;
+
+            field.Options.Remove((string)list.SelectedItem);
+        }
+    }
+
+    private async void Token_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+    {
+        MessageFieldViewModel type = null;
+        var obj = (Microsoft.UI.Xaml.Controls.ListView)sender;
+
+        MessageTokenViewModel selectedtoken;
+        object selectedfield = null;
+
+
+        if (obj.DataContext is not SettingsClone.Views.MessageEditorView editor)
+            return;
+
+        if (editor.DataContext is not SettingsClone.ViewModels.MessageBuilderViewModel list)
+            return;
+
+
+
+        if (editor.Name == "InEditor")
+        {
+            selectedtoken = list?.SelectedInToken;
+            selectedfield = obj.SelectedItem;
+        }
+        else if (editor.Name == "OutEditor")
+        {
+            selectedtoken = list?.SelectedOutToken;
+            selectedfield = obj.SelectedItem;
+        }
+        else
+        {
+            return;
+        }
+
+        if (selectedtoken is null)
+        {
+            return;
+        }
+
+        switch (selectedfield)
+        {
+            case TextFieldViewModel:
+                selectedtoken.Fields.Remove((MessageFieldViewModel)selectedfield);
+                break;
+
+            case RangeFieldViewModel:
+                selectedtoken.Fields.Remove((MessageFieldViewModel)selectedfield);
+                break;
+
+            case ChoiceFieldViewModel:
+                selectedtoken.Fields.Remove((MessageFieldViewModel)selectedfield);
+                break;
+
+            case CounterFieldViewModel:
+                selectedtoken.Fields.Remove((MessageFieldViewModel)selectedfield);
+                break;
+        }
+    }
 
 
     protected override void OnNavigatedTo(NavigationEventArgs e)
