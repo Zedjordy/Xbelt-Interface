@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.Design;
+using System.Net;
+using System.Net.NetworkInformation;
 using System.Runtime.CompilerServices;
 
 namespace SettingsClone.ViewModels;
@@ -14,7 +16,7 @@ public class ScannerViewModel : ViewModelBase
 
     public Guid Id { get; } = Guid.NewGuid();
 
-    private string _Name = "Scanner"; 
+    private string _Name = "Scanner";
     public string Name
     {
         get => _Name;
@@ -26,7 +28,7 @@ public class ScannerViewModel : ViewModelBase
     }
 
 
-    private bool _IsEnabled = true;
+    private bool _IsEnabled = false;
     public bool IsEnabled
     {
         get => _IsEnabled;
@@ -48,6 +50,40 @@ public class ScannerViewModel : ViewModelBase
         }
     }
 
+    private NetworkInterface _Net_Interface;
+    public NetworkInterface Net_Interface
+    {
+        get => _Net_Interface;
+        set
+        {
+            _Net_Interface = value;
+            OnPropertyChanged();
+        }
+    }
+
+    private IPAddress _selected_Ip;
+    public IPAddress selected_Ip
+    {
+        get => _selected_Ip;
+        set
+        {
+            _selected_Ip = value is not null ? IPAddress.Parse(value.ToString()) : IPAddress.Parse("0.0.0.0");
+            IpAddress = _selected_Ip.ToString();
+            OnPropertyChanged();
+        }
+    }
+
+
+    private ObservableCollection<IPAddress> _IPlist;
+    public ObservableCollection<IPAddress> IPlist
+        {
+        get => _IPlist;
+        set
+        {
+            _IPlist = value;
+            OnPropertyChanged();
+}
+    }
 
     private string _IpAddress;
     public string IpAddress
@@ -172,7 +208,7 @@ public class ScannerViewModel : ViewModelBase
 
     private uint _GOODREAD_perc = 100;
     public uint GOODREAD_perc => 100 - NOREAD_perc - MULTIREAD_perc;
-    
+
 
 
     private char _NOREAD_char = '?';
@@ -200,7 +236,7 @@ public class ScannerViewModel : ViewModelBase
     public ObservableCollection<MessageTokenViewModel> InMessageTokens { get; } = new() { new MessageTokenViewModel { Type = TokenType.STX, Name = "STX", Value = "\x02", Length = 1 } };
     public ObservableCollection<MessageTokenViewModel> OutMessageTokens { get; } = new() { new MessageTokenViewModel { Type = TokenType.STX, Name = "STX", Value = "\x02", Length = 1 } };
 
-    
+
 
     public enum ProtocolType
     {

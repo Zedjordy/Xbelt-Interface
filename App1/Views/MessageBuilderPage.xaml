@@ -182,33 +182,33 @@
     </Page.Resources>
 
 
-
-    <Grid RowDefinitions="Auto,*"
+    <ScrollViewer>
+        <Grid RowDefinitions="Auto,*"
           Margin="44">
 
-        <StackPanel 
+            <StackPanel 
             Grid.Row="0"
             Orientation="Horizontal"
             VerticalAlignment="Center"
             Spacing="5">
 
-            <TextBlock Text="{Binding Scanner.Name, Mode=OneWay}"
+                <TextBlock Text="{Binding Scanner.Name, Mode=OneWay}"
                    FontSize="32"
                    FontWeight="SemiBold"
                    Margin="0,0,0,20"/>
 
-            <TextBlock Text=" > "
+                <TextBlock Text=" > "
                    FontSize="32"
                    FontWeight="SemiBold"
                    Margin="0,0,0,20"/>
 
-            <TextBlock Text="Message Configuration"
+                <TextBlock Text="Message Configuration"
                    FontSize="32"
                    FontWeight="SemiBold"
                    Margin="0,0,0,20"/>
-        </StackPanel>
+            </StackPanel>
 
-        <Grid 
+            <Grid 
             Grid.Row="1"
             ColumnDefinitions="*,*"
             RowDefinitions="Auto,Auto"
@@ -216,7 +216,7 @@
             RowSpacing="20">
 
 
-            <views:MessageEditorView
+                <views:MessageEditorView
                 Grid.Row="0"
                 Grid.Column="0"
                 x:Name="InEditor"
@@ -226,7 +226,7 @@
                 SelectedToken="{Binding SelectedInToken, Mode=TwoWay}"
                 Preview="{Binding InPreview}"/>
 
-            <views:MessageEditorView
+                <views:MessageEditorView
                 Grid.Row="0"
                 Grid.Column="1"
                 x:Name="OutEditor"
@@ -238,33 +238,33 @@
 
 
 
-            <!--......................................................
+                <!--......................................................
             ....................INBOUND TOKEN EDIT.....................
             ..........................................................-->
-            <Border                 
+                <Border                 
                 Height="Auto"
                 Grid.Column="0"
                 Grid.Row="1"
                 Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
 
-                <Grid 
+                    <Grid 
                     RowSpacing="10"
                     ColumnDefinitions="*"
                     RowDefinitions="Auto,*,Auto,*"
                     Padding="10">
 
 
-                    <!-- TEXTBOX -->
-                    <TextBox
+                        <!-- TEXTBOX -->
+                        <TextBox
                         Grid.Column="0"
                         Grid.Row="0"
                         IsReadOnly="True"
                         Text="{Binding InTokenPreview, Mode=OneWay}">
 
-                    </TextBox>
+                        </TextBox>
 
-                    <!-- SELECTED TOKEN FIELDS -->
-                    <ListView
+                        <!-- SELECTED TOKEN FIELDS -->
+                        <ListView
                         Grid.Column="0"
                         Grid.Row="1"
                         x:Name="INTokenField"                        
@@ -283,15 +283,15 @@
                         Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                         Drop="Message_Drop">
 
-                        <ListView.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <ItemsStackPanel Orientation="Horizontal"/>
-                            </ItemsPanelTemplate>
-                        </ListView.ItemsPanel>
-                    </ListView>
+                            <ListView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <ItemsStackPanel Orientation="Horizontal"/>
+                                </ItemsPanelTemplate>
+                            </ListView.ItemsPanel>
+                        </ListView>
 
-                    <!-- FIELD LIST -->
-                    <ListView
+                        <!-- FIELD LIST -->
+                        <ListView
                         Grid.Column="0"
                         Grid.Row="2"
                         x:Name="INField"
@@ -299,62 +299,62 @@
                         DragItemsStarting="Message_DragStarting"
                         CanDragItems="True">
 
-                        <ListView.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <ItemsStackPanel Orientation="Horizontal"/>
-                            </ItemsPanelTemplate>
-                        </ListView.ItemsPanel>
+                            <ListView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <ItemsStackPanel Orientation="Horizontal"/>
+                                </ItemsPanelTemplate>
+                            </ListView.ItemsPanel>
 
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <Border Padding="10"
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Padding="10"
                                         Width="100"
                                         CornerRadius="6"
                                         Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}">
-                                    <TextBlock Text="{Binding Type}" HorizontalAlignment="Center"/>
-                                </Border>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
+                                        <TextBlock Text="{Binding Type}" HorizontalAlignment="Center"/>
+                                    </Border>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
 
-                    <Button Grid.Row="3"
+                        <Button Grid.Row="3"
                             Background="DarkOrange"
                             Content="Try Token"
                             Command="{Binding Generate_SelectedTokenCommand}"
                             CommandParameter="{Binding ElementName=InEditor}">
-                    </Button>
-                </Grid>
-            </Border>
+                        </Button>
+                    </Grid>
+                </Border>
 
 
 
-            <!--......................................................
+                <!--......................................................
             ..................OUTBOUND TOKEN EDIT.....................
             ..........................................................-->
-            <Border                 
+                <Border                 
                 Height="Auto"
                 Grid.Column="1"
                 Grid.Row="1"
                 Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
 
-                <Grid 
+                    <Grid 
                     RowSpacing="10"
                     ColumnDefinitions="*"
                     RowDefinitions="Auto,*,Auto,*"
                     Padding="10">
 
 
-                    <!-- TEXTBOX -->
-                    <TextBox
+                        <!-- TEXTBOX -->
+                        <TextBox
                         Grid.Column="0"
                         Grid.Row="0"
                         IsReadOnly="True"
                         Text="{Binding OutTokenPreview, Mode=OneWay}">
 
-                    </TextBox>
+                        </TextBox>
 
-                    <!-- SELECTED TOKEN FIELDS -->
-                    <ListView
+                        <!-- SELECTED TOKEN FIELDS -->
+                        <ListView
                         Grid.Column="0"
                         Grid.Row="1"
                         x:Name="OUTTokenField"                        
@@ -373,15 +373,15 @@
                         Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                         Drop="Message_Drop">
 
-                        <ListView.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <ItemsStackPanel Orientation="Horizontal"/>
-                            </ItemsPanelTemplate>
-                        </ListView.ItemsPanel>
-                    </ListView>
+                            <ListView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <ItemsStackPanel Orientation="Horizontal"/>
+                                </ItemsPanelTemplate>
+                            </ListView.ItemsPanel>
+                        </ListView>
 
-                    <!-- FIELD OPTIONS LIST -->
-                    <ListView
+                        <!-- FIELD OPTIONS LIST -->
+                        <ListView
                         Grid.Column="0"
                         Grid.Row="2"
                         x:Name="OUTField"
@@ -389,34 +389,35 @@
                         DragItemsStarting="Message_DragStarting"
                         CanDragItems="True">
 
-                        <ListView.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <ItemsStackPanel Orientation="Horizontal"/>
-                            </ItemsPanelTemplate>
-                        </ListView.ItemsPanel>
+                            <ListView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <ItemsStackPanel Orientation="Horizontal"/>
+                                </ItemsPanelTemplate>
+                            </ListView.ItemsPanel>
 
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <Border Padding="10"
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Padding="10"
                                         Width="100"
                                         CornerRadius="6"
                                         Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}">
-                                    <TextBlock Text="{Binding Type}" HorizontalAlignment="Center"/>
-                                </Border>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
+                                        <TextBlock Text="{Binding Type}" HorizontalAlignment="Center"/>
+                                    </Border>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
 
-                    <Button Grid.Row="3"
+                        <Button Grid.Row="3"
                             Background="DarkOrange"
                             Content="Try Token"
                             Command="{Binding Generate_SelectedTokenCommand}"
                             CommandParameter="{Binding ElementName=OutEditor}">
-                    </Button>
-                </Grid>
-            </Border>
+                        </Button>
+                    </Grid>
+                </Border>
+
+            </Grid>
 
         </Grid>
-
-    </Grid>
+    </ScrollViewer>
 </Page>

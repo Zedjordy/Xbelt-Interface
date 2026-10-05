@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using SettingsClone.Services;
+using SettingsClone.Services.Communication;
 using SettingsClone.ViewModels;
 using SettingsClone.Views;
 using System;
@@ -39,6 +40,9 @@ public partial class App : Application
     {
         services.AddSingleton<FrameHolder>();
         services.AddSingleton<INavigationService, NavigationService>();
+        services.AddSingleton<IConnectionService, ScannerConnectionService>();
+        services.AddSingleton<IConnection, UDPConnectionService>();
+        services.AddSingleton<IConnection, TCPConnectionService>();
 
         services.AddSingleton<MainWindow>();
 

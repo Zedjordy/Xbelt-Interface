@@ -96,7 +96,7 @@
                                                 HorizontalAlignment="Right"
                                                 MinWidth="100"
                                                 OnContent="Connect"
-                                                OffContent="Disconnect"
+                                                OffContent="Disconnect"                                        
                                                 IsOn="{Binding IsEnabled, Mode=TwoWay}"/>
 
                                 </Grid>
