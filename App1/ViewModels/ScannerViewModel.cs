@@ -1,18 +1,29 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.UI.Xaml.Controls;
+using SettingsClone.Services;
+using SettingsClone.Services.Communication;
+using SettingsClone.Services.Notification;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.Design;
+using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
+using System.Net.Sockets;
 using System.Runtime.CompilerServices;
 
 namespace SettingsClone.ViewModels;
 
 public class ScannerViewModel : ViewModelBase
 {
+    private readonly IConnectionService _connectionService;
 
-
+    public ScannerViewModel()
+    {
+        _connectionService = App.Services.GetRequiredService<IConnectionService>();
+    }
 
     public Guid Id { get; } = Guid.NewGuid();
 
@@ -28,14 +39,17 @@ public class ScannerViewModel : ViewModelBase
     }
 
 
-    private bool _IsEnabled = false;
-    public bool IsEnabled
+    private bool _IsConnected = false;
+    public bool IsConnected
     {
-        get => _IsEnabled;
+        get => _IsConnected;
         set
         {
-            _IsEnabled = value;
+            _IsConnected = value;
             OnPropertyChanged();
+
+            //Logic
+            Check_Connection();
         }
     }
 
@@ -58,6 +72,28 @@ public class ScannerViewModel : ViewModelBase
         {
             _Net_Interface = value;
             OnPropertyChanged();
+
+
+            /*  Logic of the Property*/
+
+            ObservableCollection<IPAddress> ipProps = new();
+            var _ipProps = _Net_Interface.GetIPProperties();
+            
+            ipProps.Clear();
+
+            // Get IPv4 addresses (skip IPv6)
+            foreach (var ipAddr in _ipProps.UnicastAddresses)
+            {
+                if (ipAddr.Address.AddressFamily == AddressFamily.InterNetwork) // IPv4
+                {
+                    ipProps.Add(ipAddr.Address);
+                    Console.WriteLine($"Interface: {_Net_Interface.Name}, IP: {ipAddr.Address}");
+                }
+            }
+
+            this.IPlist = ipProps;
+            this.SubnetMask = "0.0.0.0";
+            this.Gateway = "0.0.0.0";            
         }
     }
 
@@ -70,19 +106,42 @@ public class ScannerViewModel : ViewModelBase
             _selected_Ip = value is not null ? IPAddress.Parse(value.ToString()) : IPAddress.Parse("0.0.0.0");
             IpAddress = _selected_Ip.ToString();
             OnPropertyChanged();
+
+
+            /*Logic of the property*/
+
+            var nic = this.Net_Interface;
+
+            if (nic is not null && value is not null)
+            {
+                var ipInfo = nic.GetIPProperties()
+                    .UnicastAddresses
+                    .First(a => a.Address.Equals(this.selected_Ip));
+
+                this.SubnetMask = ipInfo.IPv4Mask.ToString();
+
+                var gateway = nic.GetIPProperties()
+                    .GatewayAddresses
+                    .FirstOrDefault(g =>
+                        g.Address.AddressFamily == AddressFamily.InterNetwork)
+                    ?.Address;
+
+
+                this.Gateway = gateway?.ToString() ?? "0.0.0.0";
+            }
         }
     }
 
 
     private ObservableCollection<IPAddress> _IPlist;
     public ObservableCollection<IPAddress> IPlist
-        {
+    {
         get => _IPlist;
         set
         {
             _IPlist = value;
             OnPropertyChanged();
-}
+        }
     }
 
     private string _IpAddress;
@@ -242,5 +301,17 @@ public class ScannerViewModel : ViewModelBase
     {
         UDP,
         TCP
+    }
+
+    public async void Check_Connection()
+    {
+        if (_IsConnected && this.selected_Ip is not null)
+        {
+            await _connectionService.ConnectAsync(this);
+        }
+        else
+        {
+            await _connectionService.DisconnectAsync(this);
+        }
     }
 }

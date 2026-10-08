@@ -27,6 +27,12 @@
                 FontWeight="SemiBold"
                 Margin="0,0,0,20"/>
 
+            <InfoBar
+                x:Name="GlobalInfoBar"
+                IsOpen="False"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Top"
+                Margin="20"/>
 
 
             <!-- MASTER CARD -->
@@ -232,11 +238,10 @@
                                                 VerticalAlignment="Center"
                                                 HorizontalContentAlignment="Stretch"
                                                 HorizontalAlignment="Right"
-                                                MinWidth="100"
-                                                OnContent="Enabled"
-                                                OffContent="Disabled"
-                                                IsOn="{Binding IsEnabled, Mode=TwoWay}"
-                                                Toggled="ToggleSwitch_Toggled"/>
+                                                MinWidth="100"                                                
+                                                OnContent="Connected"
+                                                OffContent="Disconnected"                                                
+                                                IsOn="{Binding IsConnected, Mode=TwoWay}"/>
 
                                         </Grid>
 
@@ -424,7 +429,8 @@
                                                         <ColumnDefinition Width="*" />
                                                     </Grid.ColumnDefinitions>
 
-                                                    <ComboBox Grid.Row="0" 
+                                                    <ComboBox Name="Combox NetInterface"
+                                                              Grid.Row="0" 
                                                               ItemsSource="{Binding DataContext.NIC, ElementName=RootPage, Mode=OneWay}"
                                                               HorizontalAlignment="Stretch"
                                                               SelectedItem="{Binding Net_Interface, Mode=TwoWay}"
@@ -443,14 +449,15 @@
                                                     <StackPanel Grid.Column="0"
                                                                 Grid.Row="1"
                                                                 Spacing="20">
-                                                        
-                                                        <ComboBox Header="IP Address"
+
+                                                        <ComboBox Name="Combox IPs"
+                                                                  Header="IP Address"
                                                                   HorizontalAlignment="Stretch"
                                                                   PlaceholderText="0.0.0.0"
                                                                   SelectedItem="{Binding selected_Ip, Mode=TwoWay}"   
-                                                                  SelectionChanged="Combobox_GetIpInfo"
+                                                                  SelectionChanged="Combobox_SET_Ip"
                                                                   ItemsSource="{Binding IPlist, Mode=TwoWay}"/>
-                                                        
+
                                                         <!--<TextBox Header="IP Address"
                                                                  PlaceholderText="0.0.0.0"
                                                                  Text="{Binding IpAddress, Mode=TwoWay}"/> -->

@@ -75,15 +75,32 @@ namespace SettingsClone.Services.Communication
         private void Connection_DataReceived(object? sender, byte[] data)
         {
             StringBuilder message = new();
+            string start, end;
+
+            start = end = "";
 
             // pacchetti dagli scanner ricevuti
             Debug.WriteLine($"Ricevuti {data.Length} bytes");
             for (int i = 0; i < data.Length; i++)
             {
-                message.Append(data[i]);
+                
+
+                if (data[i] == 2)
+                {
+                    start = "<STX>";
+                    continue;
+                }
+                else if (data[i] == 3)
+                {
+                    end = "<ETX>";
+                    continue;
+                }
+
+                char character = (char)data[i];
+                message.Append(character);
             }
-                Debug.WriteLine($"Ricevuta stringa {message}");
-            
+            Debug.WriteLine($"Ricevuta stringa {start}{message}{end}");
+
         }
 
         private void Connection_Error(object? sender, Exception exception)

@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
 using SettingsClone.Services;
+using SettingsClone.Services.Notification;
 using SettingsClone.Services.Communication;
 using SettingsClone.ViewModels;
 using System;
@@ -20,27 +21,33 @@ public sealed partial class ScannerPage : Page
     public ScannerPageViewModel ViewModel { get; }
     public event EventHandler<ToggleSwitch> ConnectionChanged;
     public event EventHandler<ComboBox> GetIps;
-    public event EventHandler<ComboBox> GetIpInfo;
-
+    public event EventHandler<ComboBox> SET_Ip;
+    private readonly INotificationService _notificationService;
     public ScannerPage()
     {
         InitializeComponent();
 
+        //_notificationService = App.Services.GetRequiredService<INotificationService>();
+
         ViewModel = App.Services.GetRequiredService<ScannerPageViewModel>();
         DataContext = ViewModel;
 
+
+
         ConnectionChanged += (s, toggle) => ViewModel.Check_Connection(toggle);
         GetIps += (s, cbox) => ViewModel.GetIps(cbox);
-        GetIpInfo += (s, cbox) => ViewModel.GetIpInfo(cbox);
+        SET_Ip += (s, cbox) => ViewModel.SET_ip(cbox);
+
+
     }
 
 
-protected override void OnNavigatedTo(NavigationEventArgs e)
-{
-    base.OnNavigatedTo(e);
+    protected override void OnNavigatedTo(NavigationEventArgs e)
+    {
+        base.OnNavigatedTo(e);
 
-    var param = (string)e.Parameter;
-}
+        var param = (string)e.Parameter;
+    }
 
     private void Slider_PointerWheelChanged(object sender, PointerRoutedEventArgs e)
     {
@@ -75,12 +82,12 @@ protected override void OnNavigatedTo(NavigationEventArgs e)
 
         GetIps?.Invoke(this, cbox);
     }
-    private void Combobox_GetIpInfo(object sender, RoutedEventArgs e)
+    private void Combobox_SET_Ip(object sender, RoutedEventArgs e)
     {
         if (sender is not ComboBox cbox)
             return;
 
-        GetIpInfo?.Invoke(this, cbox);
+        SET_Ip?.Invoke(this, cbox);
     }
 
 

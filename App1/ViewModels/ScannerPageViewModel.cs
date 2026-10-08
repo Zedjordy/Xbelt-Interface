@@ -1,8 +1,10 @@
-﻿using Microsoft.UI.Xaml;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using SettingsClone;
 using SettingsClone.Services;
 using SettingsClone.Services.Communication;
+using SettingsClone.Services.Notification;
 using SettingsClone.Views;
 using System;
 using System.Collections.ObjectModel;
@@ -22,6 +24,7 @@ public class ScannerPageViewModel : ViewModelBase
 
     private readonly INavigationService _nav;
     private readonly IConnectionService _connectionService;
+    private readonly INotificationService _notificationService;
     public ObservableCollection<NetworkInterface> NIC { get; } = new(NetworkInterface.GetAllNetworkInterfaces()
         .Where(nic => /*nic.OperationalStatus == OperationalStatus.Up
                       &&*/ (nic.NetworkInterfaceType == NetworkInterfaceType.Ethernet
@@ -47,15 +50,18 @@ public class ScannerPageViewModel : ViewModelBase
 
     public ScannerPageViewModel(
         INavigationService nav,
-        IConnectionService connectionService)
+        IConnectionService connectionService/*,
+        INotificationService notificationService*/)
     {
         _nav = nav;
+        _connectionService = connectionService;
+        //_notificationService = notificationService;
 
         OpenSocketCommand = new RelayCommand(OpenSocket);
         AddScannerCommand = new RelayCommand(AddScanner);
         RemoveScannerCommand = new RelayCommand(RemoveScanner);
 
-        _connectionService = connectionService;
+
 
         ConnectCommand =
             new RelayCommand(async p =>
@@ -103,13 +109,24 @@ public class ScannerPageViewModel : ViewModelBase
     {
         if (sender is not ToggleSwitch toggle)
             return;
+        var scanner = (ScannerViewModel)toggle.DataContext;
+        var ip = scanner.selected_Ip;
+        
+        //if(ip is not null)
+        //{
+        //    _notificationService.Error("Please select a Network Interface and an IP address");
+        //    scanner.IsConnected = false;
+        //    return;
+        //}
 
-        if (toggle.IsOn)
+        if (toggle.IsOn && ip is not null)
         {
             await _connectionService.ConnectAsync((ScannerViewModel)toggle.DataContext);
+            scanner.IsConnected = true;
         }
         else
         {
+            scanner.IsConnected = false;
             await _connectionService.DisconnectAsync((ScannerViewModel)toggle.DataContext);
         }
     }
@@ -153,56 +170,59 @@ public class ScannerPageViewModel : ViewModelBase
         if (CBox.DataContext is not ScannerViewModel scanner)
             return;
 
-
-        var _ipProps = iface.GetIPProperties();
-
-        // Get IPv4 addresses (skip IPv6)
-        foreach (var ipAddr in _ipProps.UnicastAddresses)
-        {
-            if (ipAddr.Address.AddressFamily == AddressFamily.InterNetwork) // IPv4
-            {
-                ipProps.Add(ipAddr.Address);
-                Console.WriteLine($"Interface: {iface.Name}, IP: {ipAddr.Address}");
-            }
-        }
-
-        scanner.IPlist = ipProps;
-        scanner.SubnetMask = "0.0.0.0";
-        scanner.Gateway= "0.0.0.0";
-
-        // }
-    }
-
-    public void GetIpInfo(object sender)
-    {
-        if (sender is not ComboBox CBox)
+        if (scanner.Net_Interface == CBox.SelectedItem)
             return;
 
-        if (CBox.SelectedItem is not IPAddress iface)
+        //var _ipProps = iface.GetIPProperties();
+
+        //// Get IPv4 addresses (skip IPv6)
+        //foreach (var ipAddr in _ipProps.UnicastAddresses)
+        //{
+        //    if (ipAddr.Address.AddressFamily == AddressFamily.InterNetwork) // IPv4
+        //    {
+        //        ipProps.Add(ipAddr.Address);
+        //        Console.WriteLine($"Interface: {iface.Name}, IP: {ipAddr.Address}");
+        //    }
+        //}
+
+        //scanner.IPlist = ipProps;
+        //scanner.SubnetMask = "0.0.0.0";
+        //scanner.Gateway= "0.0.0.0";
+
+        //// }
+    }
+
+    public void SET_ip(object sender)
+    {
+        if (sender is not ComboBox CBox)
             return;
 
         if (CBox.DataContext is not ScannerViewModel scanner)
             return;
 
-        var nic = scanner.Net_Interface;
-
-        if (nic != null)
-        {
-            var ipInfo = nic.GetIPProperties()
-                .UnicastAddresses
-                .First(a => a.Address.Equals(scanner.selected_Ip));
-
-            scanner.SubnetMask = ipInfo.IPv4Mask.ToString();
-
-            var gateway = nic.GetIPProperties()
-                .GatewayAddresses
-                .FirstOrDefault(g =>
-                    g.Address.AddressFamily == AddressFamily.InterNetwork)
-                ?.Address;
+        if ((CBox.SelectedItem as IPAddress ?? scanner.selected_Ip) is not IPAddress iface)
+            return;
 
 
-            scanner.Gateway = gateway?.ToString() ?? "0.0.0.0";
-        }
+        //var nic = scanner.Net_Interface;
+
+        //if (nic != null)
+        //{
+        //    var ipInfo = nic.GetIPProperties()
+        //        .UnicastAddresses
+        //        .First(a => a.Address.Equals(scanner.selected_Ip));
+
+        //    scanner.SubnetMask = ipInfo.IPv4Mask.ToString();
+
+        //    var gateway = nic.GetIPProperties()
+        //        .GatewayAddresses
+        //        .FirstOrDefault(g =>
+        //            g.Address.AddressFamily == AddressFamily.InterNetwork)
+        //        ?.Address;
+
+
+        //    scanner.Gateway = gateway?.ToString() ?? "0.0.0.0";
+        //}
     }
     #endregion
 }

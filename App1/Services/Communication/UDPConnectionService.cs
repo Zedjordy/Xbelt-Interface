@@ -62,12 +62,13 @@ namespace SettingsClone.Services.Communication
             if (!IPAddress.TryParse(string.Join('.', _scanner.IpAddress), out ip))
                 throw new FormatException("Invalid IP address");
 
-            //IPEndPoint EP = new IPEndPoint(ip, _scanner.ClientPort);                   
+            //Wait for network interface is up and connected                 
             await WaitForInterfaceUpAsync(
                     _scanner.Net_Interface,
                     _cts?.Token ?? CancellationToken.None);
 
-            _udpClient.Client.Bind(new IPEndPoint(ip, _scanner.ClientPort));
+            //Bind the connection between Sorter IP and Scanner IP
+            _udpClient.Client.Bind(new IPEndPoint(ip, _scanner.ServerPort));
 
             //_udpClient.Connect(ip, _scanner.ClientPort);
 
@@ -125,14 +126,15 @@ namespace SettingsClone.Services.Communication
 
         public async Task SendAsync(byte[] data)
         {
+            var sorter_ip = IPAddress.Parse("11.200.0.40");
+
             if (_udpClient == null)
                 throw new InvalidOperationException("Scanner non connesso.");
 
             await _udpClient.SendAsync(
                 data,
                 data.Length,
-                _scanner.IpAddress,
-                _scanner.ClientPort);
+                new IPEndPoint(sorter_ip,_scanner.ClientPort));
         }
 
         private static async Task WaitForInterfaceUpAsync(
