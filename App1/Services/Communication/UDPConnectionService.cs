@@ -8,6 +8,7 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 using Windows.Media.Protection.PlayReady;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -16,25 +17,51 @@ namespace SettingsClone.Services.Communication
 {
     public class UDPConnectionService : IConnection
     {
-        private readonly ScannerViewModel _scanner;
+        public readonly ScannerViewModel _scanner;
 
 
         private UdpClient? _udpClient;
         private CancellationTokenSource? _cts;
         public bool IsConnected { get; private set; }
-
+        private Task? _receiveTask;
+        private Task? _sendTask;
 
         public event EventHandler<byte[]>? DataReceived;
         public event EventHandler<Exception>? Error;
         public event EventHandler<string>? MessageReceived;
 
-
+        private readonly Channel<byte[]> _sendQueue =
+            Channel.CreateBounded<byte[]>(new BoundedChannelOptions(100)
+            {
+                FullMode = BoundedChannelFullMode.Wait,
+                SingleReader = true,
+                SingleWriter = false
+            });
+       /*....................................................................
+       @
+       @   UDPConnectionService
+       @   CONSTRUCTOR
+       @
+       @
+       @
+       @
+       @
+       @....................................................................*/
         public UDPConnectionService(ScannerViewModel settings)
         {
             _scanner = settings;
         }
 
-
+        /*....................................................................
+        @
+        @   ConnectAsync
+        @   Task
+        @
+        @
+        @
+        @
+        @
+        @....................................................................*/
         public async Task ConnectAsync()
         {
             if (IsConnected)
@@ -73,14 +100,26 @@ namespace SettingsClone.Services.Communication
             //_udpClient.Connect(ip, _scanner.ClientPort);
 
             _cts = new CancellationTokenSource();
-
             IsConnected = true;
 
-            _ = RecvAsync(_cts.Token);
 
-            await Task.CompletedTask;
+            _receiveTask = RecvAsync(_cts.Token);
+            _sendTask = SendAsync(_cts.Token);
+
+            //await Task.CompletedTask;
         }
 
+
+        /*....................................................................
+        @
+        @   DisconnectAsync
+        @   Task
+        @
+        @
+        @
+        @
+        @
+        @....................................................................*/
         public async Task DisconnectAsync()
         {
             if (!IsConnected)
@@ -97,21 +136,29 @@ namespace SettingsClone.Services.Communication
             IsConnected = false;
         }
 
+
+        /*....................................................................
+        @
+        @   RecvAsync
+        @   Task
+        @
+        @
+        @
+        @
+        @
+        @....................................................................*/
         public async Task RecvAsync(CancellationToken cancellationToken)
         {
             try
             {
                 while (!cancellationToken.IsCancellationRequested)
                 {
-                    var result = await _udpClient!.ReceiveAsync(
-                        cancellationToken);
+                    var result = await _udpClient!.ReceiveAsync(cancellationToken);
 
-                    DataReceived?.Invoke(
-                        this,
-                        result.Buffer);
+                    DataReceived?.Invoke(this, result.Buffer);
                 }
             }
-            catch (OperationCanceledException)
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
                 _udpClient.Close();
             }
@@ -124,19 +171,54 @@ namespace SettingsClone.Services.Communication
 
         }
 
-        public async Task SendAsync(byte[] data)
+
+        /*....................................................................
+        @
+        @   SendAsync
+        @   Task
+        @
+        @
+        @
+        @
+        @
+        @....................................................................*/
+        public async Task SendAsync(CancellationToken cancellationToken)
         {
             var sorter_ip = IPAddress.Parse("11.200.0.40");
 
             if (_udpClient == null)
-                throw new InvalidOperationException("Scanner non connesso.");
-
-            await _udpClient.SendAsync(
-                data,
-                data.Length,
-                new IPEndPoint(sorter_ip,_scanner.ClientPort));
+                throw new InvalidOperationException("UDP client not initialized");
+            try
+            {
+                await foreach (var message in
+                    _sendQueue.Reader.ReadAllAsync(cancellationToken))
+                {
+                    await _udpClient.SendAsync(message,
+                        new IPEndPoint(sorter_ip,
+                        _scanner.ClientPort), cancellationToken);
+                }
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                // Arresto previsto.
+            }
+            //await _udpClient.SendAsync(
+            //    data,
+            //    data.Length,
+            //    new IPEndPoint(sorter_ip, _scanner.ClientPort));
         }
 
+
+        /*....................................................................
+        @
+        @   WaitForInterfaceUpAsync
+        @   Task
+        @
+        @
+        @
+        @
+        @
+        @....................................................................*/
         private static async Task WaitForInterfaceUpAsync(
         NetworkInterface networkInterface,
         CancellationToken cancellationToken)
@@ -145,6 +227,28 @@ namespace SettingsClone.Services.Communication
             {
                 await Task.Delay(500, cancellationToken);
             }
+        }
+
+        /*....................................................................
+        @
+        @   QueueSendAsync
+        @   ValueTask
+        @
+        @
+        @
+        @
+        @
+        @....................................................................*/
+        public ValueTask QueueSendAsync(
+            byte[] message,
+            CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(message);
+
+            if (!IsConnected)
+                throw new InvalidOperationException("Connection is not active.");
+
+            return _sendQueue.Writer.WriteAsync(message, cancellationToken);
         }
     }
 }

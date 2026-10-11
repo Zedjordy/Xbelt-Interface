@@ -2,6 +2,7 @@
 using Microsoft.UI.Xaml;
 using SettingsClone.Services;
 using SettingsClone.Services.Communication;
+using SettingsClone.Services.Field;
 using SettingsClone.Services.Notification;
 using SettingsClone.ViewModels;
 using SettingsClone.Views;
@@ -41,6 +42,7 @@ public partial class App : Application
     {
         services.AddSingleton<FrameHolder>();
         services.AddSingleton<INavigationService, NavigationService>();
+        services.AddSingleton<IMessageToken, FieldsService>();
         //services.AddSingleton<INotificationService, NotificationService>();
         services.AddSingleton<IConnectionService, ScannerConnectionService>();
         services.AddSingleton<IConnection, UDPConnectionService>();

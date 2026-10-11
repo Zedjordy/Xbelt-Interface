@@ -13,15 +13,26 @@ namespace SettingsClone.Services.Communication
     public class ScannerConnectionService : IConnectionService
     {
         private readonly Dictionary<Guid, IConnection> _connections = new();
+        //event EventHandler<StringBuilder>? Notify_response;
 
-        public async Task ConnectAsync(
-            ScannerViewModel scanner)
+        /*....................................................................
+        @
+        @   OpenConnectionAsync
+        @   Task
+        @
+        @
+        @
+        @
+        @
+        @....................................................................*/
+        public async Task OpenConnectionAsync(ScannerViewModel scanner)
         {
             if (_connections.ContainsKey(scanner.Id))
                 return;
 
             IConnection connection;
 
+            /*Create connection according to the configured one*/
             switch (scanner.Protocol)
             {
                 case ScannerViewModel.ProtocolType.UDP:
@@ -37,14 +48,29 @@ namespace SettingsClone.Services.Communication
                         $"Protocollo {scanner.Protocol} non supportato.");
             }
 
-            connection.DataReceived += Connection_DataReceived;
+            /*Event Subscription*/
+            connection.DataReceived += scanner.OnDataReceived;
             connection.Error += Connection_Error;
+            scanner.Notify_response += scanner.Elaborate_response;
+
+
+            /*Add connection in list*/
             _connections.Add(scanner.Id, connection);
 
             await connection.ConnectAsync();
         }
 
-        public async Task DisconnectAsync(ScannerViewModel scanner)
+        /*....................................................................
+        @
+        @   CloseConnectionAsync
+        @   Task
+        @
+        @
+        @
+        @
+        @
+        @....................................................................*/
+        public async Task CloseConnectionAsync(ScannerViewModel scanner)
         {
             if (!_connections.TryGetValue(
                     scanner.Id,
@@ -55,12 +81,24 @@ namespace SettingsClone.Services.Communication
 
             await connection.DisconnectAsync();
 
-            connection.DataReceived -= Connection_DataReceived;
+            connection.DataReceived -= scanner.OnDataReceived;            
             connection.Error -= Connection_Error;
+            scanner.Notify_response -= scanner.Elaborate_response;
 
             _connections.Remove(scanner.Id);
         }
 
+
+        /*....................................................................
+        @
+        @   SendAsync
+        @   Task
+        @
+        @
+        @
+        @
+        @
+        @....................................................................*/
         public async Task SendAsync(ScannerViewModel scanner, byte[] data)
         {
             if (!_connections.TryGetValue(scanner.Id, out var connection))
@@ -69,40 +107,19 @@ namespace SettingsClone.Services.Communication
                     $"Lo scanner '{scanner.Name}' non è connesso.");
             }
 
-            await connection.SendAsync(data);
+            //await connection.SendAsync(data);
         }
 
-        private void Connection_DataReceived(object? sender, byte[] data)
-        {
-            StringBuilder message = new();
-            string start, end;
-
-            start = end = "";
-
-            // pacchetti dagli scanner ricevuti
-            Debug.WriteLine($"Ricevuti {data.Length} bytes");
-            for (int i = 0; i < data.Length; i++)
-            {
-                
-
-                if (data[i] == 2)
-                {
-                    start = "<STX>";
-                    continue;
-                }
-                else if (data[i] == 3)
-                {
-                    end = "<ETX>";
-                    continue;
-                }
-
-                char character = (char)data[i];
-                message.Append(character);
-            }
-            Debug.WriteLine($"Ricevuta stringa {start}{message}{end}");
-
-        }
-
+        /*....................................................................
+        @
+        @   Connection_Error
+        @   Task
+        @
+        @
+        @
+        @
+        @
+        @....................................................................*/
         private void Connection_Error(object? sender, Exception exception)
         {
             Debug.WriteLine(

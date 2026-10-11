@@ -67,14 +67,14 @@ public class ScannerPageViewModel : ViewModelBase
             new RelayCommand(async p =>
             {
                 if (p is ScannerViewModel scanner)
-                    await _connectionService.ConnectAsync(scanner);
+                    await _connectionService.OpenConnectionAsync(scanner);
             });
 
         DisconnectCommand =
             new RelayCommand(async p =>
             {
                 if (p is ScannerViewModel scanner)
-                    await _connectionService.DisconnectAsync(scanner);
+                    await _connectionService.CloseConnectionAsync(scanner);
             });
 
     }
@@ -121,13 +121,13 @@ public class ScannerPageViewModel : ViewModelBase
 
         if (toggle.IsOn && ip is not null)
         {
-            await _connectionService.ConnectAsync((ScannerViewModel)toggle.DataContext);
+            await _connectionService.OpenConnectionAsync((ScannerViewModel)toggle.DataContext);
             scanner.IsConnected = true;
         }
         else
         {
             scanner.IsConnected = false;
-            await _connectionService.DisconnectAsync((ScannerViewModel)toggle.DataContext);
+            await _connectionService.CloseConnectionAsync((ScannerViewModel)toggle.DataContext);
         }
     }
 

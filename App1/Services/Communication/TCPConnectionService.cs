@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 
 namespace SettingsClone.Services.Communication
@@ -22,6 +23,15 @@ namespace SettingsClone.Services.Communication
 
         public event EventHandler<byte[]>? DataReceived;
         public event EventHandler<Exception>? Error;
+        public event EventHandler<StringBuilder>? Notify_response;
+
+        private readonly Channel<byte[]> _sendQueue =
+            Channel.CreateBounded<byte[]>(new BoundedChannelOptions(100)
+            {
+                FullMode = BoundedChannelFullMode.Wait,
+                SingleReader = true,
+                SingleWriter = false
+            });
 
         public TCPConnectionService(ScannerViewModel settings)
         {
@@ -46,6 +56,8 @@ namespace SettingsClone.Services.Communication
             IsConnected = true;
 
             _ = ReceiveLoopAsync(_cts.Token);
+
+            Notify_response += _settings.Elaborate_response;
         }
 
         private async Task ReceiveLoopAsync(CancellationToken cancellationToken)
@@ -78,8 +90,9 @@ namespace SettingsClone.Services.Communication
             }
         }
 
-        public async Task SendAsync(byte[] data)
+        public async Task SendAsync(CancellationToken token)
         {
+            byte[] data = { 0, 0, 0 };
             if (_stream == null)
                 throw new InvalidOperationException(
                     "TCP non connesso.");
@@ -104,6 +117,28 @@ namespace SettingsClone.Services.Communication
             _cts = null;
 
             IsConnected = false;
+        }
+
+        /*....................................................................
+    @
+    @   QueueSendAsync
+    @   ValueTask
+    @
+    @
+    @
+    @
+    @
+    @....................................................................*/
+        public ValueTask QueueSendAsync(
+            byte[] message,
+            CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(message);
+
+            if (!IsConnected)
+                throw new InvalidOperationException("Connection is not active.");
+
+            return _sendQueue.Writer.WriteAsync(message, cancellationToken);
         }
     }
 }

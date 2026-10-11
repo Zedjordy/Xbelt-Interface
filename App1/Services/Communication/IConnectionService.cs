@@ -7,14 +7,17 @@ using System.Threading.Tasks;
 
 namespace SettingsClone.Services.Communication
 {
+    /*....................................................................
+     * 
+     * IConnectionService manages and organize all the opened connections
+     * 
+     *....................................................................*/
     public interface IConnectionService
     {
-        Task ConnectAsync(ScannerViewModel scanner);
+        Task OpenConnectionAsync(ScannerViewModel scanner);
 
-        Task DisconnectAsync(ScannerViewModel scanner);
+        Task CloseConnectionAsync(ScannerViewModel scanner);
 
-        Task SendAsync(
-            ScannerViewModel scanner,
-            byte[] data);
+        Task SendAsync(ScannerViewModel scanner, byte[] data);
     }
 }

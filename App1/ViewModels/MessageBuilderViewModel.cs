@@ -276,8 +276,6 @@ public class MessageBuilderViewModel : ViewModelBase, INotifyPropertyChanged
     private void Generate_SelectedToken(object sender)
     {
 
-        //var type = await e.DataView.GetTextAsync();
-        //var obj = (Microsoft.UI.Xaml.Controls.ListView)sender;
         StringBuilder token_string = new();
         MessageTokenViewModel selectedtoken;
 
