@@ -260,36 +260,42 @@
                         Grid.Row="0"
                         IsReadOnly="True"
                         Text="{Binding InTokenPreview, Mode=OneWay}">
-
                         </TextBox>
 
                         <!-- SELECTED TOKEN FIELDS -->
-                        <ListView
-                        Grid.Column="0"
-                        Grid.Row="1"
-                        x:Name="INTokenField"                        
-                        DataContext="{x:Bind InEditor, Mode=OneWay}"
-                        ItemsSource="{x:Bind InEditor.SelectedToken.Fields, Mode=TwoWay}"
-                        ItemTemplateSelector="{StaticResource FieldSelector}"
-                        DoubleTapped="Token_DoubleTapped"
-                        CanReorderItems="True"
-                        ReorderMode="Enabled"
-                        MinHeight="70"
-                        Height="Auto"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Stretch"
-                        AllowDrop="True"
-                        DragOver="Message_DragOver"                                  
-                        Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                        Drop="Message_Drop">
+                        <ScrollViewer 
+                            Grid.Row="1"
+                            HorizontalScrollBarVisibility="Auto"
+                            HorizontalScrollMode="Auto"
+                            FlowDirection="LeftToRight">                            
+                        
+                            <ListView
+                            Grid.Column="0"
+                            Grid.Row="1"
+                            x:Name="INTokenField"                        
+                            DataContext="{x:Bind InEditor, Mode=OneWay}"
+                            ItemsSource="{x:Bind InEditor.SelectedToken.Fields, Mode=TwoWay}"
+                            ItemTemplateSelector="{StaticResource FieldSelector}"
+                            DoubleTapped="Token_DoubleTapped"
+                            CanReorderItems="True"
+                            ReorderMode="Enabled"
+                            MinHeight="70"
+                            Height="Auto"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Stretch"
+                            AllowDrop="True"
+                            DragOver="Message_DragOver"                                  
+                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                            Drop="Message_Drop">
 
-                            <ListView.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <ItemsStackPanel Orientation="Horizontal"/>
-                                </ItemsPanelTemplate>
-                            </ListView.ItemsPanel>
-                        </ListView>
-
+                                <ListView.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <ItemsStackPanel Orientation="Horizontal"/>
+                                    </ItemsPanelTemplate>
+                                </ListView.ItemsPanel>
+                            </ListView>
+                        </ScrollViewer>
+                        
                         <!-- FIELD LIST -->
                         <ListView
                         Grid.Column="0"
@@ -350,35 +356,41 @@
                         Grid.Row="0"
                         IsReadOnly="True"
                         Text="{Binding OutTokenPreview, Mode=OneWay}">
-
                         </TextBox>
 
                         <!-- SELECTED TOKEN FIELDS -->
-                        <ListView
-                        Grid.Column="0"
-                        Grid.Row="1"
-                        x:Name="OUTTokenField"                        
-                        DataContext="{x:Bind OutEditor, Mode=OneWay}"
-                        ItemsSource="{x:Bind OutEditor.SelectedToken.Fields, Mode=TwoWay}"
-                        ItemTemplateSelector="{StaticResource FieldSelector}"
-                        DoubleTapped="Token_DoubleTapped"
-                        CanReorderItems="True"
-                        ReorderMode="Enabled"
-                        MinHeight="70"
-                        Height="Auto"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Stretch"
-                        AllowDrop="True"
-                        DragOver="Message_DragOver"                                  
-                        Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                        Drop="Message_Drop">
+                        <ScrollViewer 
+                            Grid.Row="1"
+                            HorizontalScrollBarVisibility="Auto"
+                            HorizontalScrollMode="Auto"
+                            FlowDirection="LeftToRight">
+                            
+                            <ListView
+                            Grid.Column="0"
+                            Grid.Row="1"
+                            x:Name="OUTTokenField"                        
+                            DataContext="{x:Bind OutEditor, Mode=OneWay}"
+                            ItemsSource="{x:Bind OutEditor.SelectedToken.Fields, Mode=TwoWay}"
+                            ItemTemplateSelector="{StaticResource FieldSelector}"
+                            DoubleTapped="Token_DoubleTapped"
+                            CanReorderItems="True"
+                            ReorderMode="Enabled"
+                            MinHeight="70"
+                            Height="Auto"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Stretch"
+                            AllowDrop="True"
+                            DragOver="Message_DragOver"                                  
+                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                            Drop="Message_Drop">
 
-                            <ListView.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <ItemsStackPanel Orientation="Horizontal"/>
-                                </ItemsPanelTemplate>
-                            </ListView.ItemsPanel>
-                        </ListView>
+                                <ListView.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <ItemsStackPanel Orientation="Horizontal"/>
+                                    </ItemsPanelTemplate>
+                                </ListView.ItemsPanel>
+                            </ListView>
+                        </ScrollViewer>
 
                         <!-- FIELD OPTIONS LIST -->
                         <ListView

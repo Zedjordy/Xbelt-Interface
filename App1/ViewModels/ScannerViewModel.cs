@@ -28,6 +28,7 @@ public class ScannerViewModel : ViewModelBase
     public event EventHandler<StringBuilder>? Notify_response;
     private readonly IConnectionService _connectionService;
     private readonly IMessageToken _messagetokenService;
+    private List<ResponseOutcome> Options = new(Enum.GetValues<ResponseOutcome>());
     /*....................................................................
     @
     @   SCANNER VIEW MODEL
@@ -470,6 +471,26 @@ public class ScannerViewModel : ViewModelBase
         }
     }
 
+    S_wk_scanner s_wk_scanner;
+
+    private struct S_wk_scanner
+    {
+        public S_msg_sent msg_sent;
+    }
+    private struct S_msg_sent
+    {
+        public uint total_msg;
+        public uint good_read;
+        public uint noread_read;
+        public uint multi_read;
+
+    }
+    public enum ResponseOutcome
+    {
+        GOODREAD,
+        NOREAD,
+        MULTIREAD
+    }
     public ObservableCollection<MessageTokenViewModel> InMessageTokens { get; } = new() { new MessageTokenViewModel { Type = TokenType.STX, Name = "STX", Value = "\x02", Length = 1 } };
     public ObservableCollection<MessageTokenViewModel> OutMessageTokens { get; } = new() { new MessageTokenViewModel { Type = TokenType.STX, Name = "STX", Value = "\x02", Length = 1 } };
 
@@ -610,19 +631,55 @@ public class ScannerViewModel : ViewModelBase
         var message_setting = (ScannerViewModel)_connection._scanner;
 
         StringBuilder TX_message = new();
+        ResponseOutcome outcome;
+
+        outcome = OutcomeBalancer();
 
         foreach (MessageTokenViewModel token in message_setting.OutMessageTokens)
         {
+            /*..............................
+             * If the token has a configured value (or it's a token referenced from the Inbound)
+             *..............................*/
             if (token.Value != "")
             {
                 TX_message.Append(token.Value);
             }
+            /*..............................
+             * Or if the token is without value means that has to be built by the fields its configured with
+             *..............................*/
             else if (token.Fields.Count > 0)
             {
-                foreach (MessageFieldViewModel field in token.Fields)
+
+                if (token.Type == TokenType.Barcode)
                 {
-                    TX_message.Append(_messagetokenService.Elaborate_field(field));
+                    switch (outcome)
+                    {
+                        case (ResponseOutcome.NOREAD):
+                            TX_message.Append(this.NOREAD_char, (int)token.Length);
+                            break;
+
+                        case (ResponseOutcome.MULTIREAD):
+                            TX_message.Append(this.MULTIREAD_char, (int)token.Length);
+                            break;
+
+                        case (ResponseOutcome.GOODREAD):
+                        default:
+                            foreach (MessageFieldViewModel field in token.Fields)
+                            {
+                                TX_message.Append(_messagetokenService.Elaborate_field(field));
+                            }
+                            break;
+
+                    }
                 }
+                else
+                {
+                    foreach (MessageFieldViewModel field in token.Fields)
+                    {
+                        TX_message.Append(_messagetokenService.Elaborate_field(field));
+                    }
+                }
+
             }
         }
 
@@ -633,42 +690,74 @@ public class ScannerViewModel : ViewModelBase
         await _connection.QueueSendAsync(Encoding.ASCII.GetBytes(TX_message.ToString()));
 
         Log.Write($"SCANNER {message_setting.Name} <Elaborate_response> TX response '{TX_message}'");
+    }
 
-        //foreach (var token in token_list)
-        //{
-        //    if (token.Length == 1 && (byte)token.Value[0] != 0)
-        //    {
-        //        if (data[index_char] != (byte)token.Value[0])
-        //        {
-        //            Debug.WriteLine($"token received '{data[index_char]}' different than the expected '{token.Value}'");
-        //        }
-        //        else
-        //        {
-        //            //RX_message.Append((char)data[index_char]);
-        //            if (data[index_char] == 2)
-        //            {
-        //                start = "<STX>";
-        //                Debug.WriteLine($"STX token found");
-        //            }
-        //            else if (data[index_char] == 3)
-        //            {
-        //                end = "<ETX>";
-        //                Debug.WriteLine($"ETX token found");
-        //            }
-        //        }
-        //        index_char++;
-        //    }
-        //    else
-        //    {
-        //        var tempValue = new StringBuilder();
+    private ResponseOutcome OutcomeBalancer()
+    {
+        ResponseOutcome outcome;
+        uint from;
+        uint to;
 
-        //        for (int x = 0; x < token.Length; x++, index_char++)
-        //        {
-        //            tempValue.Append((char)data[index_char]);
-        //            RX_message.Append((char)data[index_char]);
-        //        }
-        //        token.Value = tempValue.ToString();
-        //    }
-        //}
+        Random random = new();
+
+        if (this.s_wk_scanner.msg_sent.total_msg > 99)
+        {
+            this.s_wk_scanner.msg_sent.total_msg = 0;
+            this.s_wk_scanner.msg_sent.good_read = 0;
+            this.s_wk_scanner.msg_sent.noread_read = 0;
+            this.s_wk_scanner.msg_sent.multi_read = 0;
+            Options.Clear();
+            Options.AddRange(Enum.GetValues<ResponseOutcome>());
+        }
+        else
+        {
+
+            if (this.s_wk_scanner.msg_sent.good_read >= this.GOODREAD_perc)
+            {
+                Options.Remove(ResponseOutcome.GOODREAD);
+            }
+            if (this.s_wk_scanner.msg_sent.noread_read >= this.NOREAD_perc)
+            {
+                Options.Remove(ResponseOutcome.NOREAD);
+            }
+            if (this.s_wk_scanner.msg_sent.multi_read >= this.MULTIREAD_perc)
+            {
+                Options.Remove(ResponseOutcome.MULTIREAD);
+            }
+
+        }
+
+        switch (Options[random.Next(Options.Count)])
+        {
+
+
+            case (ResponseOutcome.NOREAD):
+                outcome = ResponseOutcome.NOREAD;
+                this.s_wk_scanner.msg_sent.noread_read++;
+                break;
+
+            case (ResponseOutcome.MULTIREAD):
+                outcome = ResponseOutcome.MULTIREAD;
+                this.s_wk_scanner.msg_sent.multi_read++;
+                break;
+
+            case (ResponseOutcome.GOODREAD):
+            default:
+                outcome = ResponseOutcome.GOODREAD;
+                this.s_wk_scanner.msg_sent.good_read++;
+                break;
+
+        }
+
+        this.s_wk_scanner.msg_sent.total_msg++;
+
+        Log.Write($"SCANNER {this.Name} <OutcomeBalancer> GOODREAD: {this.s_wk_scanner.msg_sent.good_read}");
+        Log.Write($"SCANNER {this.Name} <OutcomeBalancer> NOREAD: {this.s_wk_scanner.msg_sent.noread_read}");
+        Log.Write($"SCANNER {this.Name} <OutcomeBalancer> MULTIREAD: {this.s_wk_scanner.msg_sent.multi_read}");
+        Log.Write($"SCANNER {this.Name} <OutcomeBalancer> TOTAL: {this.s_wk_scanner.msg_sent.total_msg}");
+
+
+
+        return outcome;
     }
 }

@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using SettingsClone.ViewModels;
 using System;
+using System.ComponentModel;
 using Windows.ApplicationModel.DataTransfer;
 
 namespace SettingsClone.Views;
@@ -125,7 +126,7 @@ public sealed partial class MessageEditorView : UserControl
     {
         if (e.Items[0] is MessageTokenViewModel token)
         {
-            e.Data.SetText(token.Name);
+            e.Data.SetText(token.Id.ToString());
             e.Data.RequestedOperation = DataPackageOperation.Move;
         }
     }
@@ -138,6 +139,51 @@ public sealed partial class MessageEditorView : UserControl
     //DROP WITH REAL REORDER
     private async void Message_Drop(object sender, DragEventArgs e)
     {
+        if (e.Data.RequestedOperation == 0)
+            return;
+
+        var tokenId = await e.DataView?.GetTextAsync();
+        var obj = (Microsoft.UI.Xaml.Controls.ListView)sender;
+
+        //var draggedtoken = e.DataView.GetDataAsync(type);
+
+
+        if (obj.DataContext is not SettingsClone.ViewModels.MessageBuilderViewModel list)
+            return;
+
+        var destination = this.Name;
+
+        switch (destination)
+        {
+            case "InEditor":
+                return;
+                foreach (var item in list.OutMessageTokens)
+                {
+                    if (item.Id.ToString() == tokenId)
+                    {
+                        list.InMessageTokens.Add(item);
+                        break;
+                    }
+                }
+                break;
+
+            case "OutEditor":
+                foreach (var item in list.InMessageTokens)
+                {
+                    if(item.Id.ToString() == tokenId)
+                    {
+                        item.Name += " (inbound)";
+                        list.OutMessageTokens.Add(item);
+                        break;
+                    }
+                }
+                
+                break;
+        }
+
+
+        //if (editor.DataContext is not SettingsClone.ViewModels.MessageBuilderViewModel list)
+        //    return;
     }
 
     private static void OnSelectedTokenChanged(
