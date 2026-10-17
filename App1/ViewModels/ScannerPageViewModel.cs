@@ -27,8 +27,8 @@ public class ScannerPageViewModel : ViewModelBase
     private readonly INotificationService _notificationService;
     public ObservableCollection<NetworkInterface> NIC { get; } = new(NetworkInterface.GetAllNetworkInterfaces()
         .Where(nic => /*nic.OperationalStatus == OperationalStatus.Up
-                      &&*/ (nic.NetworkInterfaceType == NetworkInterfaceType.Ethernet
-                      || nic.NetworkInterfaceType == NetworkInterfaceType.Wireless80211)));
+                      &&*/ (nic.NetworkInterfaceType == NetworkInterfaceType.Wireless80211
+                      || nic.NetworkInterfaceType == NetworkInterfaceType.Ethernet)));
 
     public ObservableCollection<ScannerViewModel> Scanners { get; } = new() { new ScannerViewModel() };
 

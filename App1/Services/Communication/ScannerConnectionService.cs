@@ -1,4 +1,6 @@
-﻿using SettingsClone.ViewModels;
+﻿using Microsoft.Extensions.DependencyInjection;
+using SettingsClone.Services.Monitoring;
+using SettingsClone.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -13,8 +15,9 @@ namespace SettingsClone.Services.Communication
     public class ScannerConnectionService : IConnectionService
     {
         private readonly Dictionary<Guid, IConnection> _connections = new();
+        
         //event EventHandler<StringBuilder>? Notify_response;
-
+        
         /*....................................................................
         @
         @   OpenConnectionAsync
@@ -36,7 +39,7 @@ namespace SettingsClone.Services.Communication
             switch (scanner.Protocol)
             {
                 case ScannerViewModel.ProtocolType.UDP:
-                    connection = new UDPConnectionService(scanner);
+                    connection = new UDPConnectionService(App.Services.GetRequiredService<IMessageMonitorService>(), scanner);
                     break;
 
                 case ScannerViewModel.ProtocolType.TCP:

@@ -45,8 +45,8 @@ public sealed partial class MainWindow : Window
                     _navigation.Navigate<ScannerPage>();
                     break;
                 
-                case "Network":
-                    _navigation.Navigate<NetworkPage>(App.Services.GetRequiredService<ScannerPageViewModel>());
+                case "Message Monitor":
+                    _navigation.Navigate<MessageMonitorPage>(App.Services.GetRequiredService<ScannerPageViewModel>());
                     break;
             }
         }

@@ -10,7 +10,7 @@
 
 
 
-        <Grid Margin="40"
+        <Grid Padding="16"
               MinWidth="250"
               RowSpacing="10">
 
@@ -23,7 +23,7 @@
             <TextBlock
                 Grid.Row="0"
                 Text="Scanner Configuration"
-                FontSize="32"
+                FontSize="24"
                 FontWeight="SemiBold"
                 Margin="0,0,0,20"/>
 

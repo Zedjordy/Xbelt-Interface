@@ -46,8 +46,8 @@
                 </NavigationViewItem>
 
                 <!-- Network and Communication -->
-                <NavigationViewItem Tag="Network"
-                                Content="Network">
+                <NavigationViewItem Tag="Message Monitor"
+                                Content="Message Monitor">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE148;"/>
                         <!-- Settings/gear-like system icon -->

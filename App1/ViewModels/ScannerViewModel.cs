@@ -393,12 +393,30 @@ public class ScannerViewModel : ViewModelBase
         get => _NOREAD_perc;
         set
         {
+            //Re-add the NOREAD case if the value being increased
+            if ((value > _NOREAD_perc) && !Options.Contains(ResponseOutcome.NOREAD))
+            {
+                Options.Add(ResponseOutcome.NOREAD);
+            }
+            else if ((value == 0) && Options.Contains(ResponseOutcome.NOREAD))
+            {
+                Options.Remove(ResponseOutcome.NOREAD);
+            }
+            else
+            {
+
+            }
+
+            #region PERCENTAGE BALANCING VALUE
+
             int delta = (int)value - (int)_NOREAD_perc;
 
             if (delta > 0 && ((GOODREAD_perc - delta) < 0))
             {
                 MULTIREAD_perc = (uint)Math.Max(0, MULTIREAD_perc - delta);
             }
+
+            #endregion
 
             if (SetProperty(ref _NOREAD_perc, value))
             {
@@ -422,12 +440,29 @@ public class ScannerViewModel : ViewModelBase
         get => _MULTIREAD_perc;
         set
         {
+            //Re-add the MULTIREAD case if the value being increased
+            if ((value > _MULTIREAD_perc) && !Options.Contains(ResponseOutcome.MULTIREAD))
+            {
+                Options.Add(ResponseOutcome.MULTIREAD);
+            }
+            else if ((value == 0) && Options.Contains(ResponseOutcome.MULTIREAD))
+            {
+                Options.Remove(ResponseOutcome.MULTIREAD);
+            }
+            else
+            {
+
+            }
+
+            #region PERCENTAGE BALANCING VALUE
             int delta = (int)value - (int)_MULTIREAD_perc;
 
             if (delta > 0 && ((GOODREAD_perc - delta) < 0))
             {
                 NOREAD_perc = (uint)Math.Max(0, NOREAD_perc - delta);
             }
+            #endregion
+
             if (SetProperty(ref _MULTIREAD_perc, value))
             {
                 OnPropertyChanged(nameof(GOODREAD_perc));
@@ -445,8 +480,35 @@ public class ScannerViewModel : ViewModelBase
     @
     @....................................................................*/
     private uint _GOODREAD_perc = 100;
-    public uint GOODREAD_perc => 100 - NOREAD_perc - MULTIREAD_perc;
+    public uint GOODREAD_perc
+    {
+        get => _GOODREAD_perc = 100 - NOREAD_perc - MULTIREAD_perc;
+        set
+        {
+            //Re-add the GOOD READ case if the value being increased
+            if ((value > _GOODREAD_perc) && !Options.Contains(ResponseOutcome.GOODREAD))
+            {
+                Options.Add(ResponseOutcome.GOODREAD);
+            }
+            else if ((value == 0) && Options.Contains(ResponseOutcome.GOODREAD))
+            {
+                Options.Remove(ResponseOutcome.GOODREAD);
+            }
+            else
+            {
 
+            }
+
+            //#region PERCENTAGE BALANCING VALUE
+            ////_GOODREAD_perc = 100 - NOREAD_perc - MULTIREAD_perc;
+            //#endregion
+
+            //if (SetProperty(ref _GOODREAD_perc, (100 - NOREAD_perc - MULTIREAD_perc)))
+            //{
+            //    OnPropertyChanged(nameof(GOODREAD_perc));
+            //}
+        }
+    }
 
 
     private char _NOREAD_char = '?';
@@ -510,7 +572,16 @@ public class ScannerViewModel : ViewModelBase
         UDP,
         TCP
     }
-
+    /*....................................................................
+    @
+    @   Check_Connection
+    @   async void
+    @
+    @
+    @
+    @
+    @
+    @....................................................................*/
     public async void Check_Connection()
     {
         if (_IsConnected && this.selected_Ip is not null)
@@ -700,32 +771,38 @@ public class ScannerViewModel : ViewModelBase
 
         Random random = new();
 
-        if (this.s_wk_scanner.msg_sent.total_msg > 99)
+        if ((this.s_wk_scanner.msg_sent.total_msg % 100) == 0)
         {
-            this.s_wk_scanner.msg_sent.total_msg = 0;
-            this.s_wk_scanner.msg_sent.good_read = 0;
-            this.s_wk_scanner.msg_sent.noread_read = 0;
-            this.s_wk_scanner.msg_sent.multi_read = 0;
+            //this.s_wk_scanner.msg_sent.total_msg = 0;
+            //this.s_wk_scanner.msg_sent.good_read = 0;
+            //this.s_wk_scanner.msg_sent.noread_read = 0;
+            //this.s_wk_scanner.msg_sent.multi_read = 0;
             Options.Clear();
             Options.AddRange(Enum.GetValues<ResponseOutcome>());
         }
-        else
+
+
+        if (this.GOODREAD_perc != 100
+            && (this.s_wk_scanner.msg_sent.good_read > 0) && (this.GOODREAD_perc > 0)
+            && (this.s_wk_scanner.msg_sent.good_read % this.GOODREAD_perc) == 0
+            || this.GOODREAD_perc == 0)
         {
-
-            if (this.s_wk_scanner.msg_sent.good_read >= this.GOODREAD_perc)
-            {
-                Options.Remove(ResponseOutcome.GOODREAD);
-            }
-            if (this.s_wk_scanner.msg_sent.noread_read >= this.NOREAD_perc)
-            {
-                Options.Remove(ResponseOutcome.NOREAD);
-            }
-            if (this.s_wk_scanner.msg_sent.multi_read >= this.MULTIREAD_perc)
-            {
-                Options.Remove(ResponseOutcome.MULTIREAD);
-            }
-
+            Options.Remove(ResponseOutcome.GOODREAD);
         }
+        if ((this.s_wk_scanner.msg_sent.noread_read > 0) && (this.NOREAD_perc > 0)
+            && (this.s_wk_scanner.msg_sent.noread_read % this.NOREAD_perc) == 0
+            || this.NOREAD_perc == 0)
+        {
+            Options.Remove(ResponseOutcome.NOREAD);
+        }
+        if ((this.s_wk_scanner.msg_sent.multi_read > 0) && (this.MULTIREAD_perc > 0)
+            && (this.s_wk_scanner.msg_sent.multi_read % this.MULTIREAD_perc) == 0
+            || this.MULTIREAD_perc == 0)
+        {
+            Options.Remove(ResponseOutcome.MULTIREAD);
+        }
+
+
 
         switch (Options[random.Next(Options.Count)])
         {

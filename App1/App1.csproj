@@ -16,7 +16,6 @@
   <ItemGroup>
     <None Remove="Views\Controls\MessageFieldControl.xaml" />
     <None Remove="Views\MessageEditorView.xaml" />
-    <None Remove="Views\NetworkPage.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Page Remove="Views\PageButton.xaml" />
@@ -45,7 +44,9 @@
     <ProjectCapability Include="Msix" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.9" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.13" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.13" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.28000.1839" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="2.2.0" />
   </ItemGroup>
@@ -80,10 +81,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Models\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="Views\NetworkPage.xaml">
+    <Page Update="Views\MessageMonitorPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>

@@ -1,0 +1,151 @@
+<Page
+    x:Class="SettingsClone.Views.MessageMonitorPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Grid Padding="16" RowSpacing="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock
+                Text="Message Monitor"
+                FontSize="24"
+                FontWeight="SemiBold"
+                VerticalAlignment="Center" />
+
+            <Button
+                Grid.Column="1"
+                Content="Clear view"
+                Command="{Binding ClearViewCommand}" />
+        </Grid>
+
+        <!-- Filters -->
+        <Grid Grid.Row="1" ColumnSpacing="8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="160" />
+                <ColumnDefinition Width="160" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <ComboBox
+                Header="Direction"
+                ItemsSource="{Binding DirectionOptions}"
+                SelectedItem="{Binding DirectionFilter, Mode=TwoWay}"
+                HorizontalAlignment="Stretch" />
+
+            <ComboBox
+                Grid.Column="1"
+                Header="Scanner"
+                ItemsSource="{Binding ScannerFilters}"
+                SelectedItem="{Binding ScannerFilter, Mode=TwoWay}"
+                HorizontalAlignment="Stretch" />
+
+            <TextBox
+                Grid.Column="2"
+                Header="Search (HEX, text, scanner)"
+                PlaceholderText="Search..."
+                Text="{Binding SearchText, Mode=TwoWay,
+                    UpdateSourceTrigger=PropertyChanged}"
+                HorizontalAlignment="Stretch" />
+        </Grid>
+
+        <!-- Message table -->
+        <ListView
+            Grid.Row="2"
+            ItemsSource="{Binding Messages}"
+            SelectionMode="Single"
+            IsItemClickEnabled="False">
+
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Padding="4" ColumnSpacing="5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="60" />
+                            <ColumnDefinition Width="105" />
+                            <ColumnDefinition Width="30" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="60" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock
+                            Text="{Binding Sequence}"                            
+                            FontFamily="Consolas"
+                            VerticalAlignment="Center" />
+                        
+                        <TextBlock
+                            Grid.Column="1"
+                            Text="{Binding TimestampText}"
+                            FontFamily="Consolas"
+                            VerticalAlignment="Center" />
+
+                        <TextBlock
+                            Grid.Column="2"
+                            Text="{Binding DirectionText}"
+                            FontWeight="SemiBold"
+                            VerticalAlignment="Center" />
+
+                        <TextBlock
+                            Grid.Column="3"
+                            Text="{Binding ScannerName}"
+                            VerticalAlignment="Center"
+                            TextTrimming="CharacterEllipsis" />
+
+                        <TextBlock
+                            Grid.Column="4"
+                            Text="{Binding Length}"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center" />
+                        
+                        <TextBlock
+                            Grid.Column="5"
+                            Text="{Binding Text}"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center" />
+
+                        <TextBlock
+                            Grid.Column="6"
+                            Text="{Binding Hex}"
+                            FontFamily="Consolas"
+                            VerticalAlignment="Center"
+                            TextTrimming="CharacterEllipsis" />
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+        <!-- Diagnostics -->
+        <StackPanel
+            Grid.Row="3"
+            Orientation="Horizontal"
+            Spacing="20">
+
+            <TextBlock>
+                <Run Text="Published: " />
+                <Run Text="{Binding TotalPublished}" />
+            </TextBlock>
+
+            <TextBlock>
+                <Run Text="Dropped: " />
+                <Run Text="{Binding DroppedMessages}" />
+            </TextBlock>
+
+            <TextBlock>
+                <Run Text="Evicted: " />
+                <Run Text="{Binding EvictedMessages}" />
+            </TextBlock>
+        </StackPanel>
+    </Grid>
+</Page>

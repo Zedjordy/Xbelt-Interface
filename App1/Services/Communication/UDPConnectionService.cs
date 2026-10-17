@@ -1,4 +1,5 @@
-﻿using SettingsClone.ViewModels;
+﻿using SettingsClone.Services.Monitoring;
+using SettingsClone.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,6 +12,7 @@ using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using Windows.Media.Protection.PlayReady;
+using static SettingsClone.Models.MonitoredMessage;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace SettingsClone.Services.Communication
@@ -18,6 +20,7 @@ namespace SettingsClone.Services.Communication
     public class UDPConnectionService : IConnection
     {
         public readonly ScannerViewModel _scanner;
+        private readonly IMessageMonitorService _monitor;
 
 
         private UdpClient? _udpClient;
@@ -37,19 +40,21 @@ namespace SettingsClone.Services.Communication
                 SingleReader = true,
                 SingleWriter = false
             });
-       /*....................................................................
-       @
-       @   UDPConnectionService
-       @   CONSTRUCTOR
-       @
-       @
-       @
-       @
-       @
-       @....................................................................*/
-        public UDPConnectionService(ScannerViewModel settings)
+        /*....................................................................
+        @
+        @   UDPConnectionService
+        @   CONSTRUCTOR
+        @
+        @
+        @
+        @
+        @
+        @....................................................................*/
+        public UDPConnectionService(IMessageMonitorService monitor, ScannerViewModel settings)
         {
             _scanner = settings;
+            _monitor = monitor;
+
         }
 
         /*....................................................................
@@ -155,6 +160,13 @@ namespace SettingsClone.Services.Communication
                 {
                     var result = await _udpClient!.ReceiveAsync(cancellationToken);
 
+                    _monitor.TryPublish(
+                        _scanner.Id.ToString(),
+                        _scanner.Name,
+                        MessageDirection.Rx,
+                        result.RemoteEndPoint.ToString(),
+                        result.Buffer);
+
                     DataReceived?.Invoke(this, result.Buffer);
                 }
             }
@@ -184,7 +196,7 @@ namespace SettingsClone.Services.Communication
         @....................................................................*/
         public async Task SendAsync(CancellationToken cancellationToken)
         {
-            var sorter_ip = IPAddress.Parse("11.200.0.40");
+            var sorter_ip = IPAddress.Parse("10.100.232.213");
 
             if (_udpClient == null)
                 throw new InvalidOperationException("UDP client not initialized");
@@ -196,16 +208,21 @@ namespace SettingsClone.Services.Communication
                     await _udpClient.SendAsync(message,
                         new IPEndPoint(sorter_ip,
                         _scanner.ClientPort), cancellationToken);
+
+
+                    /*Publish the message into the monitoring service*/
+                    _monitor.TryPublish(
+                        _scanner.Id.ToString(),
+                        _scanner.Name,
+                        MessageDirection.Tx,
+                        sorter_ip.ToString(),
+                        message);
                 }
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
                 // Arresto previsto.
             }
-            //await _udpClient.SendAsync(
-            //    data,
-            //    data.Length,
-            //    new IPEndPoint(sorter_ip, _scanner.ClientPort));
         }
 
 
