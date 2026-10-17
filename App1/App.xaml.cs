@@ -87,16 +87,36 @@ public partial class App : Application
         services.AddSingleton<MainWindow>();
         //...........................................................................
 
-        //Pages
+        /*-----------------
+         * Pages
+         *-----------------*/
+        //  ->  Scanner
         services.AddTransient<ScannerPage>();
-        services.AddTransient<MessageMonitorPage>();
         services.AddTransient<MessageBuilderPage>();
+
+        //  ->  Message Monitor
+        services.AddTransient<MessageMonitorPage>();
+
+        //  ->  General
+        services.AddTransient<GeneralPage>();
+
+        //  ->  Dispatch
+        services.AddTransient<DispatchPage>();
         //...........................................................................
 
-        //ViewModel
+        /*-----------------
+         * VieModels
+         *-----------------*/
+        //  ->  Scanner
         services.AddSingleton<ScannerPageViewModel>();
-        services.AddSingleton<MessageMonitorViewModel>();
         services.AddTransient<MessageBuilderViewModel>();
+        //  ->  Message Monitor
+        services.AddSingleton<MessageMonitorViewModel>();
+        //  ->  General
+        services.AddSingleton<GeneralViewModel>();
+
+        //  ->  Dispatch
+        services.AddSingleton<DispatchViewModel>();
         //...........................................................................
     }
 

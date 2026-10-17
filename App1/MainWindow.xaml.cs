@@ -41,6 +41,14 @@ public sealed partial class MainWindow : Window
         {
             switch (item.Tag?.ToString())
             {
+                case "General":
+                    _navigation.Navigate<GeneralPage>();
+                    break;
+
+                case "Dispatch":
+                    _navigation.Navigate<DispatchPage>();
+                    break;
+
                 case "Scanner":
                     _navigation.Navigate<ScannerPage>();
                     break;

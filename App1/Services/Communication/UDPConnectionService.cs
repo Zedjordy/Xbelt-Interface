@@ -20,6 +20,7 @@ namespace SettingsClone.Services.Communication
     public class UDPConnectionService : IConnection
     {
         public readonly ScannerViewModel _scanner;
+        public readonly GeneralViewModel _sorter;
         private readonly IMessageMonitorService _monitor;
 
 
@@ -50,9 +51,10 @@ namespace SettingsClone.Services.Communication
         @
         @
         @....................................................................*/
-        public UDPConnectionService(IMessageMonitorService monitor, ScannerViewModel settings)
+        public UDPConnectionService(IMessageMonitorService monitor, ScannerViewModel settings, GeneralViewModel endpoint_settings)
         {
             _scanner = settings;
+            _sorter = endpoint_settings;
             _monitor = monitor;
 
         }
@@ -196,7 +198,7 @@ namespace SettingsClone.Services.Communication
         @....................................................................*/
         public async Task SendAsync(CancellationToken cancellationToken)
         {
-            var sorter_ip = IPAddress.Parse("10.100.232.213");
+            var endpoint_ip = IPAddress.Parse(_sorter.IpAddress);
 
             if (_udpClient == null)
                 throw new InvalidOperationException("UDP client not initialized");
@@ -206,7 +208,7 @@ namespace SettingsClone.Services.Communication
                     _sendQueue.Reader.ReadAllAsync(cancellationToken))
                 {
                     await _udpClient.SendAsync(message,
-                        new IPEndPoint(sorter_ip,
+                        new IPEndPoint(endpoint_ip,
                         _scanner.ClientPort), cancellationToken);
 
 
@@ -215,7 +217,7 @@ namespace SettingsClone.Services.Communication
                         _scanner.Id.ToString(),
                         _scanner.Name,
                         MessageDirection.Tx,
-                        sorter_ip.ToString(),
+                        endpoint_ip.ToString(),
                         message);
                 }
             }

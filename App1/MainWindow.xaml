@@ -36,6 +36,24 @@
 
             <NavigationView.MenuItems>
 
+                <!-- General -->
+                <NavigationViewItem Tag="General"
+                                Content="General Setting">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE713;"/>
+                        <!-- Settings/gear-like system icon -->
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+
+                <!-- Dispatch -->
+                <NavigationViewItem Tag="Dispatch"
+                                Content="Dispatch">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE770;"/>
+                        <!-- Settings/gear-like system icon -->
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+
                 <!-- Scanner -->
                 <NavigationViewItem Tag="Scanner"
                                 Content="Scanner">

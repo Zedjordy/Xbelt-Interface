@@ -39,7 +39,10 @@ namespace SettingsClone.Services.Communication
             switch (scanner.Protocol)
             {
                 case ScannerViewModel.ProtocolType.UDP:
-                    connection = new UDPConnectionService(App.Services.GetRequiredService<IMessageMonitorService>(), scanner);
+                    connection = new UDPConnectionService(
+                                                App.Services.GetRequiredService<IMessageMonitorService>(), 
+                                                scanner, 
+                                                App.Services.GetRequiredService<GeneralViewModel>());
                     break;
 
                 case ScannerViewModel.ProtocolType.TCP:

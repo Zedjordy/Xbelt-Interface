@@ -411,15 +411,17 @@ public class ScannerViewModel : ViewModelBase
 
             int delta = (int)value - (int)_NOREAD_perc;
 
-            if (delta > 0 && ((GOODREAD_perc - delta) < 0))
+            if (delta > 0 && ((_GOODREAD_perc - delta) < 0))
             {
-                MULTIREAD_perc = (uint)Math.Max(0, MULTIREAD_perc - delta);
+                _MULTIREAD_perc = (uint)Math.Max(0, _MULTIREAD_perc - delta);
+                MULTIREAD_perc = _MULTIREAD_perc;
             }
 
             #endregion
 
             if (SetProperty(ref _NOREAD_perc, value))
             {
+                OnPropertyChanged(nameof(MULTIREAD_perc));
                 OnPropertyChanged(nameof(GOODREAD_perc));
             }
         }
@@ -457,14 +459,16 @@ public class ScannerViewModel : ViewModelBase
             #region PERCENTAGE BALANCING VALUE
             int delta = (int)value - (int)_MULTIREAD_perc;
 
-            if (delta > 0 && ((GOODREAD_perc - delta) < 0))
+            if (delta > 0 && ((_GOODREAD_perc - delta) < 0))
             {
-                NOREAD_perc = (uint)Math.Max(0, NOREAD_perc - delta);
+                _NOREAD_perc = (uint)Math.Max(0, _NOREAD_perc - delta);
+                NOREAD_perc = _NOREAD_perc;
             }
             #endregion
 
             if (SetProperty(ref _MULTIREAD_perc, value))
             {
+                OnPropertyChanged(nameof(NOREAD_perc));
                 OnPropertyChanged(nameof(GOODREAD_perc));
             }
         }
@@ -482,9 +486,10 @@ public class ScannerViewModel : ViewModelBase
     private uint _GOODREAD_perc = 100;
     public uint GOODREAD_perc
     {
-        get => _GOODREAD_perc = 100 - NOREAD_perc - MULTIREAD_perc;
-        set
+        get
         {
+            var value = 100 - _NOREAD_perc - _MULTIREAD_perc;
+
             //Re-add the GOOD READ case if the value being increased
             if ((value > _GOODREAD_perc) && !Options.Contains(ResponseOutcome.GOODREAD))
             {
@@ -499,14 +504,9 @@ public class ScannerViewModel : ViewModelBase
 
             }
 
-            //#region PERCENTAGE BALANCING VALUE
-            ////_GOODREAD_perc = 100 - NOREAD_perc - MULTIREAD_perc;
-            //#endregion
+            _GOODREAD_perc = value;
 
-            //if (SetProperty(ref _GOODREAD_perc, (100 - NOREAD_perc - MULTIREAD_perc)))
-            //{
-            //    OnPropertyChanged(nameof(GOODREAD_perc));
-            //}
+            return value;
         }
     }
 
@@ -543,7 +543,7 @@ public class ScannerViewModel : ViewModelBase
     {
         public uint total_msg;
         public uint good_read;
-        public uint noread_read;
+        public uint no_read;
         public uint multi_read;
 
     }
@@ -708,49 +708,39 @@ public class ScannerViewModel : ViewModelBase
 
         foreach (MessageTokenViewModel token in message_setting.OutMessageTokens)
         {
-            /*..............................
-             * If the token has a configured value (or it's a token referenced from the Inbound)
-             *..............................*/
-            if (token.Value != "")
+            if ((token.Type == TokenType.Barcode) && ((outcome == ResponseOutcome.NOREAD) || (outcome == ResponseOutcome.MULTIREAD)))
             {
-                TX_message.Append(token.Value);
-            }
-            /*..............................
-             * Or if the token is without value means that has to be built by the fields its configured with
-             *..............................*/
-            else if (token.Fields.Count > 0)
-            {
-
-                if (token.Type == TokenType.Barcode)
+                switch (outcome)
                 {
-                    switch (outcome)
-                    {
-                        case (ResponseOutcome.NOREAD):
-                            TX_message.Append(this.NOREAD_char, (int)token.Length);
-                            break;
+                    case (ResponseOutcome.NOREAD):
+                        TX_message.Append(this.NOREAD_char, (int)token.Length);
+                        break;
 
-                        case (ResponseOutcome.MULTIREAD):
-                            TX_message.Append(this.MULTIREAD_char, (int)token.Length);
-                            break;
+                    case (ResponseOutcome.MULTIREAD):
+                        TX_message.Append(this.MULTIREAD_char, (int)token.Length);
+                        break;
 
-                        case (ResponseOutcome.GOODREAD):
-                        default:
-                            foreach (MessageFieldViewModel field in token.Fields)
-                            {
-                                TX_message.Append(_messagetokenService.Elaborate_field(field));
-                            }
-                            break;
-
-                    }
+                    default:
+                        break;
                 }
-                else
+            }
+            else
+            {
+                if (token.Value != "")
+                {
+                    TX_message.Append(token.Value);
+                }
+                else if (token.Fields.Count > 0)
                 {
                     foreach (MessageFieldViewModel field in token.Fields)
                     {
                         TX_message.Append(_messagetokenService.Elaborate_field(field));
                     }
                 }
+                else
+                {
 
+                }
             }
         }
 
@@ -766,38 +756,29 @@ public class ScannerViewModel : ViewModelBase
     private ResponseOutcome OutcomeBalancer()
     {
         ResponseOutcome outcome;
-        uint from;
-        uint to;
 
         Random random = new();
 
         if ((this.s_wk_scanner.msg_sent.total_msg % 100) == 0)
         {
-            //this.s_wk_scanner.msg_sent.total_msg = 0;
-            //this.s_wk_scanner.msg_sent.good_read = 0;
-            //this.s_wk_scanner.msg_sent.noread_read = 0;
-            //this.s_wk_scanner.msg_sent.multi_read = 0;
             Options.Clear();
             Options.AddRange(Enum.GetValues<ResponseOutcome>());
         }
 
 
-        if (this.GOODREAD_perc != 100
-            && (this.s_wk_scanner.msg_sent.good_read > 0) && (this.GOODREAD_perc > 0)
-            && (this.s_wk_scanner.msg_sent.good_read % this.GOODREAD_perc) == 0
-            || this.GOODREAD_perc == 0)
+        if ((((this.GOODREAD_perc > 0) && (this.s_wk_scanner.msg_sent.good_read > 0) && ((this.s_wk_scanner.msg_sent.good_read % this.GOODREAD_perc) == 0)) 
+            || (this.GOODREAD_perc == 0))
+            && Options.Contains(ResponseOutcome.GOODREAD))
         {
             Options.Remove(ResponseOutcome.GOODREAD);
         }
-        if ((this.s_wk_scanner.msg_sent.noread_read > 0) && (this.NOREAD_perc > 0)
-            && (this.s_wk_scanner.msg_sent.noread_read % this.NOREAD_perc) == 0
-            || this.NOREAD_perc == 0)
+        if ((((this.NOREAD_perc > 0) && (this.s_wk_scanner.msg_sent.no_read > 0) && ((this.s_wk_scanner.msg_sent.no_read % this.NOREAD_perc) == 0)) || (this.NOREAD_perc == 0))
+            && Options.Contains(ResponseOutcome.NOREAD))
         {
             Options.Remove(ResponseOutcome.NOREAD);
         }
-        if ((this.s_wk_scanner.msg_sent.multi_read > 0) && (this.MULTIREAD_perc > 0)
-            && (this.s_wk_scanner.msg_sent.multi_read % this.MULTIREAD_perc) == 0
-            || this.MULTIREAD_perc == 0)
+        if ((((this.MULTIREAD_perc > 0) && (this.s_wk_scanner.msg_sent.multi_read > 0) && ((this.s_wk_scanner.msg_sent.multi_read % this.MULTIREAD_perc) == 0)) || (this.MULTIREAD_perc == 0))
+            && Options.Contains(ResponseOutcome.MULTIREAD))
         {
             Options.Remove(ResponseOutcome.MULTIREAD);
         }
@@ -810,7 +791,7 @@ public class ScannerViewModel : ViewModelBase
 
             case (ResponseOutcome.NOREAD):
                 outcome = ResponseOutcome.NOREAD;
-                this.s_wk_scanner.msg_sent.noread_read++;
+                this.s_wk_scanner.msg_sent.no_read++;
                 break;
 
             case (ResponseOutcome.MULTIREAD):
@@ -829,7 +810,7 @@ public class ScannerViewModel : ViewModelBase
         this.s_wk_scanner.msg_sent.total_msg++;
 
         Log.Write($"SCANNER {this.Name} <OutcomeBalancer> GOODREAD: {this.s_wk_scanner.msg_sent.good_read}");
-        Log.Write($"SCANNER {this.Name} <OutcomeBalancer> NOREAD: {this.s_wk_scanner.msg_sent.noread_read}");
+        Log.Write($"SCANNER {this.Name} <OutcomeBalancer> NOREAD: {this.s_wk_scanner.msg_sent.no_read}");
         Log.Write($"SCANNER {this.Name} <OutcomeBalancer> MULTIREAD: {this.s_wk_scanner.msg_sent.multi_read}");
         Log.Write($"SCANNER {this.Name} <OutcomeBalancer> TOTAL: {this.s_wk_scanner.msg_sent.total_msg}");
 
