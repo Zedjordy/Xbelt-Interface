@@ -17,8 +17,9 @@ using System.Text;
 using System.Threading;
 using SettingsClone.Models;
 using static SettingsClone.Models.MonitoredMessage;
+using SettingsClone.ViewModels.Scanner;
 
-namespace SettingsClone.ViewModels;
+namespace SettingsClone.ViewModels.Monitor;
 
 public partial class MessageMonitorViewModel : ObservableObject, IDisposable
 {

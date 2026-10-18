@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SettingsClone.Services.Monitoring;
 
 namespace SettingsClone.Models;
 
@@ -27,7 +28,7 @@ public sealed class MonitoredMessage
         _payload.Select(b => b.ToString("x2")));
 
     // Codifica coerente con il protocollo ASCII usato nell'esempio.
-    public string Text => FormatAscii(_payload);
+    public string Text => ControlCharacterFormatter.FormatAscii(_payload);
     public enum MessageDirection
     {
         Rx,
@@ -60,26 +61,5 @@ public sealed class MonitoredMessage
 
         // Copia i dati: il buffer UDP originale può essere riutilizzato.
         _payload = payload.ToArray();
-    }
-
-    private static string FormatAscii(ReadOnlySpan<byte> payload)
-    {
-        var result = new StringBuilder(payload.Length);
-
-        foreach (byte b in payload)
-        {
-            if (b >= 0x20 && b <= 0x7E)
-            {
-                result.Append((char)b);
-            }
-            else
-            {
-                // Rende visibili STX, ETX, CR, LF e gli altri byte di controllo.
-                result.Append("\\x");
-                result.Append(b.ToString("X2"));
-            }
-        }
-
-        return result.ToString();
     }
 }

@@ -2,7 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using SettingsClone.Services;
-using SettingsClone.ViewModels;
+using SettingsClone.ViewModels.Scanner;
 using SettingsClone.Views;
 using System.Linq;
 

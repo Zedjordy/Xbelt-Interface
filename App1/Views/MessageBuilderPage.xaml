@@ -250,21 +250,34 @@
                     <Grid 
                     RowSpacing="10"
                     ColumnDefinitions="*"
-                    RowDefinitions="Auto,*,Auto,*"
+                    RowDefinitions="*,Auto,*,*,*,Auto,*"
                     Padding="10">
 
+                        <!-- Token Generated -->
+                        <TextBlock 
+                            Grid.Column="0"
+                            Grid.Row="0" 
+                            Text="Token generated"
+                            FontWeight="SemiBold"/>
 
                         <!-- TEXTBOX -->
                         <TextBox
                         Grid.Column="0"
-                        Grid.Row="0"
+                        Grid.Row="1"
                         IsReadOnly="True"
                         Text="{Binding InTokenPreview, Mode=OneWay}">
                         </TextBox>
 
+                        <!-- Token Fields Chain-->
+                        <TextBlock 
+                            Grid.Column="0"
+                            Grid.Row="2" 
+                            Text="Token Fields Chain"
+                            FontWeight="SemiBold"/>
+
                         <!-- SELECTED TOKEN FIELDS -->
                         <ScrollViewer 
-                            Grid.Row="1"
+                            Grid.Row="3"
                             HorizontalScrollBarVisibility="Auto"
                             HorizontalScrollMode="Auto"
                             FlowDirection="LeftToRight">                            
@@ -295,11 +308,18 @@
                                 </ListView.ItemsPanel>
                             </ListView>
                         </ScrollViewer>
-                        
+
+                        <!-- Token's Fields -->
+                        <TextBlock 
+                            Grid.Column="0"
+                            Grid.Row="4" 
+                            Text="Token's fields"
+                            FontWeight="SemiBold"/>
+
                         <!-- FIELD LIST -->
                         <ListView
                         Grid.Column="0"
-                        Grid.Row="2"
+                        Grid.Row="5"
                         x:Name="INField"
                         ItemsSource="{Binding Fields, Mode=OneWay}"
                         DragItemsStarting="Message_DragStarting"
@@ -323,9 +343,9 @@
                             </ListView.ItemTemplate>
                         </ListView>
 
-                        <Button Grid.Row="3"
+                        <Button Grid.Row="6"
                             Background="DarkOrange"
-                            Content="Try Token"
+                            Content="Token Test Generator"
                             Command="{Binding Generate_SelectedTokenCommand}"
                             CommandParameter="{Binding ElementName=InEditor}">
                         </Button>
@@ -346,21 +366,34 @@
                     <Grid 
                     RowSpacing="10"
                     ColumnDefinitions="*"
-                    RowDefinitions="Auto,*,Auto,*"
+                    RowDefinitions="*,Auto,*,*,*,Auto,*"
                     Padding="10">
 
+                        <!-- Token Generated -->
+                        <TextBlock 
+                            Grid.Column="0"
+                            Grid.Row="0" 
+                            Text="Token generated"
+                            FontWeight="SemiBold"/>
 
                         <!-- TEXTBOX -->
                         <TextBox
-                        Grid.Column="0"
-                        Grid.Row="0"
-                        IsReadOnly="True"
-                        Text="{Binding OutTokenPreview, Mode=OneWay}">
+                            Grid.Column="0"
+                            Grid.Row="1"
+                            IsReadOnly="True"
+                            Text="{Binding OutTokenPreview, Mode=OneWay}">
                         </TextBox>
 
+                        <!-- Token Fields Chain-->
+                        <TextBlock 
+                            Grid.Column="0"
+                            Grid.Row="2" 
+                            Text="Token Fields Chain"
+                            FontWeight="SemiBold"/>                        
+                        
                         <!-- SELECTED TOKEN FIELDS -->
                         <ScrollViewer 
-                            Grid.Row="1"
+                            Grid.Row="3"
                             HorizontalScrollBarVisibility="Auto"
                             HorizontalScrollMode="Auto"
                             FlowDirection="LeftToRight">
@@ -392,10 +425,17 @@
                             </ListView>
                         </ScrollViewer>
 
+                        <!-- Token's Fields -->
+                        <TextBlock 
+                            Grid.Column="0"
+                            Grid.Row="4" 
+                            Text="Token's fields"
+                            FontWeight="SemiBold"/>                        
+                        
                         <!-- FIELD OPTIONS LIST -->
                         <ListView
                         Grid.Column="0"
-                        Grid.Row="2"
+                        Grid.Row="5"
                         x:Name="OUTField"
                         ItemsSource="{Binding Fields, Mode=OneWay}"
                         DragItemsStarting="Message_DragStarting"
@@ -419,9 +459,9 @@
                             </ListView.ItemTemplate>
                         </ListView>
 
-                        <Button Grid.Row="3"
+                        <Button Grid.Row="6"
                             Background="DarkOrange"
-                            Content="Try Token"
+                            Content="Token Test Tenerator"
                             Command="{Binding Generate_SelectedTokenCommand}"
                             CommandParameter="{Binding ElementName=OutEditor}">
                         </Button>

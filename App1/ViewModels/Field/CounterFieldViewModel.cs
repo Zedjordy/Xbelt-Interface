@@ -10,10 +10,27 @@ public class CounterFieldViewModel : MessageFieldViewModel
 {
     public int Current { get; set; }
 
-    public string Start { get; set; }
+    private string _Start;
+    public string Start
+    {
+        get => _Start;
 
-    public string End { get; set; }
+        set
+        {
+            SetProperty(ref _Start, value);
+        }
+    }
 
+    private string _End;
+    public string End
+    {
+        get => _End;
+
+        set
+        {
+            SetProperty(ref _End, value);
+        }
+    }
 
     public CounterFieldViewModel()
     {

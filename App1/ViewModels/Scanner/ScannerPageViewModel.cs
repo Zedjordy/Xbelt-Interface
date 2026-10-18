@@ -1,11 +1,12 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using SettingsClone;
 using SettingsClone.Services;
 using SettingsClone.Services.Communication;
 using SettingsClone.Services.Notification;
 using SettingsClone.Views;
+using SettingsClone.ViewModels;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -17,7 +18,7 @@ using System.Reflection.Metadata;
 using System.Windows.Input;
 
 
-namespace SettingsClone.ViewModels;
+namespace SettingsClone.ViewModels.Scanner;
 
 public class ScannerPageViewModel : ViewModelBase
 {
@@ -25,10 +26,13 @@ public class ScannerPageViewModel : ViewModelBase
     private readonly INavigationService _nav;
     private readonly IConnectionService _connectionService;
     private readonly INotificationService _notificationService;
-    public ObservableCollection<NetworkInterface> NIC { get; } = new(NetworkInterface.GetAllNetworkInterfaces()
-        .Where(nic => /*nic.OperationalStatus == OperationalStatus.Up
-                      &&*/ (nic.NetworkInterfaceType == NetworkInterfaceType.Wireless80211
-                      || nic.NetworkInterfaceType == NetworkInterfaceType.Ethernet)));
+
+    //public ObservableCollection<NetworkInterface> NIC { get; } = new(NetworkInterface.GetAllNetworkInterfaces()
+    //    .Where(nic => /*nic.OperationalStatus == OperationalStatus.Up
+    //                  &&*/ (nic.NetworkInterfaceType == NetworkInterfaceType.Wireless80211
+    //                  || nic.NetworkInterfaceType == NetworkInterfaceType.Ethernet)));
+
+    public NetworkViewModel NIC { get; }
 
     public ObservableCollection<ScannerViewModel> Scanners { get; } = new() { new ScannerViewModel() };
 
@@ -50,8 +54,7 @@ public class ScannerPageViewModel : ViewModelBase
 
     public ScannerPageViewModel(
         INavigationService nav,
-        IConnectionService connectionService/*,
-        INotificationService notificationService*/)
+        IConnectionService connectionService)
     {
         _nav = nav;
         _connectionService = connectionService;
@@ -61,7 +64,7 @@ public class ScannerPageViewModel : ViewModelBase
         AddScannerCommand = new RelayCommand(AddScanner);
         RemoveScannerCommand = new RelayCommand(RemoveScanner);
 
-
+        NIC = new NetworkViewModel();
 
         ConnectCommand =
             new RelayCommand(async p =>

@@ -1,5 +1,6 @@
 ﻿using SettingsClone.Services.Monitoring;
 using SettingsClone.ViewModels;
+using SettingsClone.ViewModels.Scanner;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

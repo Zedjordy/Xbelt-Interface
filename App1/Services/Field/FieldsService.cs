@@ -67,13 +67,9 @@ public class FieldsService : IMessageToken
                             var randomOption = random.Next(int.Parse(rangeToken.Start), int.Parse(rangeToken.End) + 1);
                             token_string.Append(randomOption.ToString($"D{length}"));
                         }
-                        catch (FormatException e)
+                        catch (Exception e)
                         {
-                            Debug.WriteLine("FormatException");
-                        }
-                        catch (NullReferenceException e)
-                        {
-                            Debug.WriteLine("NullReferenceException");
+                            Debug.WriteLine($"{e}");
                         }
                         break;
                     /*....................................................................
@@ -82,20 +78,27 @@ public class FieldsService : IMessageToken
                     @....................................................................*/
                     case RangeType.AlphaNumeric:
                         {
-                            StringBuilder randomOption = new();
-                            int length;
-
-                            length = Math.Max(rangeToken.Start.Length, rangeToken.End.Length);
-
-                            for (int i = 0; i < length; i++)
+                            try
                             {
-                                char start = rangeToken.Start[i];
-                                char end = rangeToken.End[i];
+                                StringBuilder randomOption = new();
+                                int length;
 
-                                randomOption.Append(GenerateRandomChar(start, end));
+                                length = Math.Max(rangeToken.Start.Length, rangeToken.End.Length);
+
+                                for (int i = 0; i < length; i++)
+                                {
+                                    char start = rangeToken.Start[i];
+                                    char end = rangeToken.End[i];
+
+                                    randomOption.Append(GenerateRandomChar(start, end));
+                                }
+
+                                token_string.Append(randomOption);
                             }
-
-                            token_string.Append(randomOption);
+                            catch (Exception e)
+                            {
+                                Debug.WriteLine($"{e}");
+                            }
 
                         }
                         break;
@@ -170,9 +173,9 @@ public class FieldsService : IMessageToken
 
                             token_string.Append(randomOption);
                         }
-                        catch (FormatException e)
+                        catch (Exception e)
                         {
-                            Debug.WriteLine("test");
+                            Debug.WriteLine($"{e}");
                         }
                         break;
                 }

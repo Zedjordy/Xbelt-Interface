@@ -6,9 +6,14 @@ using SettingsClone.Services.Communication;
 using SettingsClone.Services.Field;
 using SettingsClone.Services.Monitoring;
 using SettingsClone.Services.Notification;
+using SettingsClone.Services.ThreadDispatcher;
 using SettingsClone.ViewModels;
+using SettingsClone.ViewModels.MessageBuilder;
+using SettingsClone.ViewModels.Monitor;
+using SettingsClone.ViewModels.Scanner;
 using SettingsClone.Views;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace SettingsClone;
 
@@ -25,9 +30,8 @@ public partial class App : Application
 
         var services = new ServiceCollection();
 
-
-
         host = Host.CreateDefaultBuilder()
+
         .ConfigureServices(services =>
         {
             ConfigureServices(services);
@@ -75,6 +79,9 @@ public partial class App : Application
         services.AddSingleton<INavigationService, NavigationService>();
         services.AddSingleton<IMessageToken, FieldsService>();
         services.AddSingleton<IConnectionService, ScannerConnectionService>();
+        services.AddSingleton<UiDispatcher>();
+        services.AddSingleton<IUiDispatcher>(
+            sp => sp.GetRequiredService<UiDispatcher>());
         //services.AddSingleton<INotificationService, NotificationService>();
         //...........................................................................
 
@@ -110,10 +117,15 @@ public partial class App : Application
         //  ->  Scanner
         services.AddSingleton<ScannerPageViewModel>();
         services.AddTransient<MessageBuilderViewModel>();
+        
         //  ->  Message Monitor
         services.AddSingleton<MessageMonitorViewModel>();
+        
         //  ->  General
         services.AddSingleton<GeneralViewModel>();
+        
+        //  ->  Network
+        services.AddTransient<NetworkViewModel>();
 
         //  ->  Dispatch
         services.AddSingleton<DispatchViewModel>();
@@ -125,7 +137,12 @@ public partial class App : Application
         await host.StartAsync();
 
         _window = Services.GetRequiredService<MainWindow>();
+
+        Services.GetRequiredService<IUiDispatcher>()
+            .Initialize(_window.DispatcherQueue);
+
         _window.Activate();
+
     }
 
     #endregion

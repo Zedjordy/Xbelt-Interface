@@ -5,8 +5,8 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
 using Microsoft.VisualBasic;
 using SettingsClone.Services;
-using SettingsClone.ViewModels;
 using SettingsClone.ViewModels.Field;
+using SettingsClone.ViewModels.MessageBuilder;
 using System;
 using System.Linq;
 using System.Text;
@@ -107,7 +107,7 @@ public sealed partial class MessageBuilderPage : Page
         if (obj.DataContext is not SettingsClone.Views.MessageEditorView editor)
             return;
 
-        if (editor.DataContext is not SettingsClone.ViewModels.MessageBuilderViewModel list)
+        if (editor.DataContext is not MessageBuilderViewModel list)
             return;
 
 
@@ -175,7 +175,7 @@ public sealed partial class MessageBuilderPage : Page
         if (obj.DataContext is not SettingsClone.Views.MessageEditorView editor)
             return;
 
-        if (editor.DataContext is not SettingsClone.ViewModels.MessageBuilderViewModel list)
+        if (editor.DataContext is not MessageBuilderViewModel list)
             return;
 
 
@@ -226,6 +226,13 @@ public sealed partial class MessageBuilderPage : Page
         base.OnNavigatedTo(e);
 
         ViewModel.Initialize(e.Parameter);
+    }
+
+    protected override void OnNavigatedFrom(NavigationEventArgs e)
+    {
+        base.OnNavigatedFrom(e);
+
+        ViewModel.Leaving();
     }
 
 }

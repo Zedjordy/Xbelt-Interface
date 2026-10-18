@@ -431,7 +431,7 @@
 
                                                     <ComboBox Name="Combox NetInterface"
                                                               Grid.Row="0" 
-                                                              ItemsSource="{Binding DataContext.NIC, ElementName=RootPage, Mode=OneWay}"
+                                                              ItemsSource="{Binding DataContext.NIC.nics, ElementName=RootPage, Mode=OneWay}"
                                                               HorizontalAlignment="Stretch"
                                                               SelectedItem="{Binding Net_Interface, Mode=TwoWay}"
                                                               SelectionChanged="Combobox_GetIps"

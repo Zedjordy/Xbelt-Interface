@@ -5,9 +5,11 @@ using SettingsClone.Services.Communication;
 using SettingsClone.Services.Field;
 using SettingsClone.Services.Notification;
 using SettingsClone.ViewModels.Field;
+using SettingsClone.ViewModels.MessageBuilder;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Diagnostics;
@@ -15,17 +17,17 @@ using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using static SettingsClone.ViewModels.Field.RangeFieldViewModel;
 
-namespace SettingsClone.ViewModels;
+namespace SettingsClone.ViewModels.Scanner;
 
 public class ScannerViewModel : ViewModelBase
 {
     public event EventHandler<StringBuilder>? Notify_response;
+    private NotifyCollectionChangedEventHandler? handlers;
     private readonly IConnectionService _connectionService;
     private readonly IMessageToken _messagetokenService;
     private List<ResponseOutcome> Options = new(Enum.GetValues<ResponseOutcome>());
@@ -572,6 +574,7 @@ public class ScannerViewModel : ViewModelBase
         UDP,
         TCP
     }
+
     /*....................................................................
     @
     @   Check_Connection
@@ -766,7 +769,7 @@ public class ScannerViewModel : ViewModelBase
         }
 
 
-        if ((((this.GOODREAD_perc > 0) && (this.s_wk_scanner.msg_sent.good_read > 0) && ((this.s_wk_scanner.msg_sent.good_read % this.GOODREAD_perc) == 0)) 
+        if ((((this.GOODREAD_perc > 0) && (this.s_wk_scanner.msg_sent.good_read > 0) && ((this.s_wk_scanner.msg_sent.good_read % this.GOODREAD_perc) == 0))
             || (this.GOODREAD_perc == 0))
             && Options.Contains(ResponseOutcome.GOODREAD))
         {

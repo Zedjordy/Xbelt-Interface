@@ -1,11 +1,15 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using NPOI.SS.Formula.Functions;
 
 namespace SettingsClone.ViewModels;
 
-public class ViewModelBase : INotifyPropertyChanged
+public class ViewModelBase : ObservableCollection<T>, INotifyPropertyChanged 
 {
     public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -38,4 +42,5 @@ public class ViewModelBase : INotifyPropertyChanged
             _execute(parameter);
         }
     }
+
 }

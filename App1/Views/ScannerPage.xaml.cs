@@ -6,13 +6,13 @@ using Microsoft.UI.Xaml.Navigation;
 using SettingsClone.Services;
 using SettingsClone.Services.Notification;
 using SettingsClone.Services.Communication;
-using SettingsClone.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Net.NetworkInformation;
 using System.Windows.Input;
+using SettingsClone.ViewModels.Scanner;
 
 namespace SettingsClone.Views;
 

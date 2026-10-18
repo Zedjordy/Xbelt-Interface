@@ -1,7 +1,7 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
-using SettingsClone.ViewModels;
+using SettingsClone.ViewModels.MessageBuilder;
 using System;
 using System.ComponentModel;
 using Windows.ApplicationModel.DataTransfer;
@@ -148,7 +148,7 @@ public sealed partial class MessageEditorView : UserControl
         //var draggedtoken = e.DataView.GetDataAsync(type);
 
 
-        if (obj.DataContext is not SettingsClone.ViewModels.MessageBuilderViewModel list)
+        if (obj.DataContext is not MessageBuilderViewModel list)
             return;
 
         var destination = this.Name;

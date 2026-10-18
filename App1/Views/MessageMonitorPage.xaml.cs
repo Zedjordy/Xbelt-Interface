@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
 using SettingsClone.Services;
 using SettingsClone.ViewModels;
+using SettingsClone.ViewModels.Monitor;
 using System;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
