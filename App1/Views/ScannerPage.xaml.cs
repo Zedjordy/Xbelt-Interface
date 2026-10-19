@@ -3,16 +3,10 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
-using SettingsClone.Services;
 using SettingsClone.Services.Notification;
-using SettingsClone.Services.Communication;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Net.NetworkInformation;
-using System.Windows.Input;
 using SettingsClone.ViewModels.Scanner;
+using System;
+using System.Net;
 
 namespace SettingsClone.Views;
 
@@ -87,7 +81,21 @@ public sealed partial class ScannerPage : Page
         if (sender is not ComboBox cbox)
             return;
 
-        SET_Ip?.Invoke(this, cbox);
+        if (cbox.DataContext is not ScannerViewModel scanner)
+            return;
+
+
+        if (cbox.SelectedItem is not null && ViewModel.IsIpAvailable(cbox.SelectedItem.ToString(), scanner))
+        {
+            //SET_Ip?.Invoke(this, cbox);
+            scanner.selected_Ip = IPAddress.Parse(cbox.SelectedItem.ToString());
+            //cbox.SelectedItem = scanner.selected_Ip;
+        }
+        else
+        {
+            scanner.selected_Ip = null;
+            cbox.SelectedItem = null;
+        }
     }
 
 

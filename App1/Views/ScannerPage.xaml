@@ -454,8 +454,8 @@
                                                                   Header="IP Address"
                                                                   HorizontalAlignment="Stretch"
                                                                   PlaceholderText="0.0.0.0"
-                                                                  SelectedItem="{Binding selected_Ip, Mode=TwoWay}"   
-                                                                  SelectionChanged="Combobox_SET_Ip"
+                                                                  SelectionChanged="Combobox_SET_Ip"                                                                  
+                                                                  SelectedItem="{Binding selected_Ip, Mode=OneWay}"   
                                                                   ItemsSource="{Binding IPlist, Mode=TwoWay}"/>
 
                                                         <!--<TextBox Header="IP Address"
@@ -536,14 +536,26 @@
 
                                                             <Grid ColumnSpacing="20">
                                                                 <Grid.ColumnDefinitions>
-                                                                    <ColumnDefinition Width="100"/>
+                                                                    <ColumnDefinition Width="Auto"/>
                                                                     <ColumnDefinition Width="100"/>
                                                                 </Grid.ColumnDefinitions>
 
                                                                 <StackPanel
                                                                     Grid.Column="0">
                                                                     <TextBlock
-                                                                        Text="TX delay in ms:"
+                                                                        Text="Response Delay in ms:"
+                                                                        FontSize="12"
+                                                                        Opacity="0.7"/>
+                                                                    <TextBlock
+                                                                        Text="NO READ %"
+                                                                        FontSize="12"
+                                                                        Opacity="0.7"/>
+                                                                    <TextBlock
+                                                                        Text="MULTI READ %"
+                                                                        FontSize="12"
+                                                                        Opacity="0.7"/>
+                                                                    <TextBlock
+                                                                        Text="GOOD READ %"
                                                                         FontSize="12"
                                                                         Opacity="0.7"/>
                                                                 </StackPanel>
@@ -551,6 +563,18 @@
                                                                 <StackPanel Grid.Column="1">
                                                                     <TextBlock
                                                                         Text="{Binding TxDelay}"
+                                                                        FontSize="12"
+                                                                        Opacity="0.7"/>
+                                                                    <TextBlock
+                                                                        Text="{Binding NOREAD_perc}"
+                                                                        FontSize="12"
+                                                                        Opacity="0.7"/>
+                                                                    <TextBlock
+                                                                        Text="{Binding MULTIREAD_perc}"
+                                                                        FontSize="12"
+                                                                        Opacity="0.7"/>
+                                                                    <TextBlock
+                                                                        Text="{Binding GOODREAD_perc}"
                                                                         FontSize="12"
                                                                         Opacity="0.7"/>
                                                                 </StackPanel>

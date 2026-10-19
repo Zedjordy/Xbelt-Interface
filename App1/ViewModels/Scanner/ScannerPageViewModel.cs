@@ -175,24 +175,6 @@ public class ScannerPageViewModel : ViewModelBase
 
         if (scanner.Net_Interface == CBox.SelectedItem)
             return;
-
-        //var _ipProps = iface.GetIPProperties();
-
-        //// Get IPv4 addresses (skip IPv6)
-        //foreach (var ipAddr in _ipProps.UnicastAddresses)
-        //{
-        //    if (ipAddr.Address.AddressFamily == AddressFamily.InterNetwork) // IPv4
-        //    {
-        //        ipProps.Add(ipAddr.Address);
-        //        Console.WriteLine($"Interface: {iface.Name}, IP: {ipAddr.Address}");
-        //    }
-        //}
-
-        //scanner.IPlist = ipProps;
-        //scanner.SubnetMask = "0.0.0.0";
-        //scanner.Gateway= "0.0.0.0";
-
-        //// }
     }
 
     public void SET_ip(object sender)
@@ -205,27 +187,13 @@ public class ScannerPageViewModel : ViewModelBase
 
         if ((CBox.SelectedItem as IPAddress ?? scanner.selected_Ip) is not IPAddress iface)
             return;
+    }
 
-
-        //var nic = scanner.Net_Interface;
-
-        //if (nic != null)
-        //{
-        //    var ipInfo = nic.GetIPProperties()
-        //        .UnicastAddresses
-        //        .First(a => a.Address.Equals(scanner.selected_Ip));
-
-        //    scanner.SubnetMask = ipInfo.IPv4Mask.ToString();
-
-        //    var gateway = nic.GetIPProperties()
-        //        .GatewayAddresses
-        //        .FirstOrDefault(g =>
-        //            g.Address.AddressFamily == AddressFamily.InterNetwork)
-        //        ?.Address;
-
-
-        //    scanner.Gateway = gateway?.ToString() ?? "0.0.0.0";
-        //}
+    public bool IsIpAvailable(
+    string ipAddress,
+    ScannerViewModel currentScanner)
+    {
+        return Scanners.All(scanner => ReferenceEquals(scanner, currentScanner) || !string.Equals(scanner.IpAddress,ipAddress,StringComparison.OrdinalIgnoreCase));
     }
     #endregion
 }

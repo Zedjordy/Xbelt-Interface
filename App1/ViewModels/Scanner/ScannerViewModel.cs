@@ -821,4 +821,6 @@ public class ScannerViewModel : ViewModelBase
 
         return outcome;
     }
+
+
 }
